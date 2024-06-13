@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687124790053",
+    "project_id": "bai2l2",
+    "storage_bucket": "bai2l2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687124790053:android:11e14907a5dfce6466b8cc",
+        "android_client_info": {
+          "package_name": "com.example.exercies3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoqYZ69ZNqwbSCqM4gEBUgas-L_af5FMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

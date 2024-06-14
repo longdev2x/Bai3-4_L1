@@ -1,3 +1,4 @@
+import 'package:exercies3/common/widgets/app_slide_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,9 +7,17 @@ class AuthTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "Sign In",
-      style: TextStyle(fontSize: 38.sp, color: Colors.white, fontWeight: FontWeight.bold),
+    return AppSlideTransiton(
+      begin: const Offset(0.0, -3.0),
+      duration: const Duration(milliseconds: 1500),
+      child: Text(
+        "Sign In",
+        style: TextStyle(
+          fontSize: 38.sp,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

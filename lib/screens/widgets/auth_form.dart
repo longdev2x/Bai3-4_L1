@@ -3,6 +3,7 @@ import 'package:exercies3/common/widgets/app_text_form_field.dart';
 import 'package:exercies3/controller/auth_controller.dart';
 import 'package:exercies3/model/user_entity.dart';
 import 'package:exercies3/providers/is_login_provider.dart';
+import 'package:exercies3/providers/loader_provider.dart';
 import 'package:exercies3/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,7 @@ class AuthFormWidget extends ConsumerStatefulWidget {
 class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
   late UserEntity user;
   String pass = "";
-  
+
   @override
   void didChangeDependencies() {
     user = ref.watch(userProvider);
@@ -28,6 +29,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
   @override
   Widget build(BuildContext context) {
     final bool isLogin = ref.watch(isLoginProvider);
+    final bool isLoader = ref.watch(loaderProvider);
     final GlobalKey<FormState> keyForm = GlobalKey();
     return Form(
       key: keyForm,
@@ -80,14 +82,16 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
             ),
           SizedBox(height: isLogin ? 50.h : 20.h),
           AppButton(
-            ontap: () {
-              didChangeDependencies.call();
-              if(keyForm.currentState!.validate()) {
-                isLogin
-                ? AuthController.signIn(ref, context)
-                : AuthController.signUp(ref);
-              }
-            },
+            ontap: isLoader
+                ? null
+                : () {
+                    didChangeDependencies.call();
+                    if (keyForm.currentState!.validate()) {
+                      isLogin
+                          ? AuthController.signIn(ref, context)
+                          : AuthController.signUp(ref);
+                    }
+                  },
             name: isLogin ? "Login" : "SignUp",
           ),
           SizedBox(height: 10.h),
@@ -99,10 +103,12 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
                   : "You already have an account?"),
               SizedBox(width: 5.w),
               GestureDetector(
-                onTap: () {
-                  ref.read(isLoginProvider.notifier).switchScreen();
-                  didChangeDependencies.call();
-                },
+                onTap: isLoader
+                    ? null
+                    : () {
+                        ref.read(isLoginProvider.notifier).switchScreen();
+                        didChangeDependencies.call();
+                      },
                 child: Text(
                   isLogin ? "SignUp" : "SignIn",
                   style: const TextStyle(

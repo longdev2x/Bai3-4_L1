@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class TextFormFieldWidget extends StatelessWidget {
+class AppTextFormField extends StatelessWidget {
   final String? hintText;
   final bool? isPass;
   final String? initialValue;
   final String? Function(String? value)? validator;
   final Function(String? value)? onChanged;
-  const TextFormFieldWidget({
+  const AppTextFormField({
     super.key,
     this.hintText = "",
     this.isPass = false,

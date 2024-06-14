@@ -2,7 +2,7 @@ import 'package:exercies3/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ButtonWidget extends StatelessWidget {
+class AppButton extends StatelessWidget {
   final double? height;
   final double? width;
   final String? name;
@@ -11,7 +11,7 @@ class ButtonWidget extends StatelessWidget {
   final double? fontSize;
   final Function()? ontap;
 
-  const ButtonWidget({
+  const AppButton({
     super.key,
     this.ontap,
     this.height = 45,

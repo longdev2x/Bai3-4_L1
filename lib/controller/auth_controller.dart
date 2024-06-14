@@ -1,10 +1,10 @@
-import 'package:exercies3/common/widgets/custom_dialog.dart';
+import 'package:exercies3/common/widgets/app_dialog.dart';
 import 'package:exercies3/model/user_entity.dart';
 import 'package:exercies3/providers/is_login_provider.dart';
 import 'package:exercies3/providers/loader_provider.dart';
 import 'package:exercies3/providers/user_provider.dart';
 import 'package:exercies3/repos/auth_repos.dart';
-import 'package:exercies3/screens/widgets/home_screen.dart';
+import 'package:exercies3/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +19,7 @@ class AuthController {
       UserCredential userCredential = await AuthRepos.signUpWithFirebase(user);
       userCredential.user!.sendEmailVerification();
       ref.read(loaderProvider.notifier).updateLoader(false);
-      CustomDialog.showToast(
-          "Thành công, vui lòng xác thực email");
+      AppDialog.showToast("Thành công, vui lòng xác thực email");
       //Add username, photo...
       ref.read(isLoginProvider.notifier).switchScreen();
     } on FirebaseAuthException catch (e) {
@@ -28,13 +27,13 @@ class AuthController {
       ref.read(loaderProvider.notifier).updateLoader(false);
       switch (e.code) {
         case "email-already-in-use":
-          CustomDialog.showToast("Email đã được sử dụng");
+          AppDialog.showToast("Email đã được sử dụng");
           break;
         case "invalid-email":
-          CustomDialog.showToast("Email không hợp lệ");
+          AppDialog.showToast("Email không hợp lệ");
           break;
         case "weak-password":
-          CustomDialog.showToast("Mật khẩu chưa đủ mạnh");
+          AppDialog.showToast("Mật khẩu chưa đủ mạnh");
           break;
         case "operation-not-allowed":
           if (kDebugMode) {
@@ -42,7 +41,7 @@ class AuthController {
           }
           break;
         default:
-          CustomDialog.showToast("Có lỗi gì đó");
+          AppDialog.showToast("Có lỗi gì đó");
       }
     }
   }
@@ -53,9 +52,8 @@ class AuthController {
     ref.read(loaderProvider.notifier).updateLoader(true);
     try {
       UserCredential userCredential = await AuthRepos.loginWithFirebase(user);
-
       ref.read(loaderProvider.notifier).updateLoader(false);
-      CustomDialog.showToast("Đăng nhập thành công");
+      AppDialog.showToast("Đăng nhập thành công");
       //Save user token to local, sharedpreferences ...
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -70,19 +68,19 @@ class AuthController {
       ref.read(loaderProvider.notifier).updateLoader(false);
       switch (e.code) {
         case "user-disabled":
-          CustomDialog.showToast("Tài khoản bị vô hiệu hoá");
+          AppDialog.showToast("Tài khoản bị vô hiệu hoá");
           break;
         case "invalid-email":
-          CustomDialog.showToast("Email không hợp lệ");
+          AppDialog.showToast("Email không hợp lệ");
           break;
         case "user-not-found":
-          CustomDialog.showToast("Email chưa đăng ký");
+          AppDialog.showToast("Email chưa đăng ký");
           break;
         case "wrong-password":
-          CustomDialog.showToast("Sai mật khẩu");
+          AppDialog.showToast("Sai mật khẩu");
           break;
         default:
-          CustomDialog.showToast("Vui lòng kiểm tra lại");
+          AppDialog.showToast("Vui lòng kiểm tra lại");
       }
     }
   }

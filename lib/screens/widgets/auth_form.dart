@@ -1,5 +1,5 @@
-import 'package:exercies3/common/widgets/button.dart';
-import 'package:exercies3/common/widgets/text_form_field.dart';
+import 'package:exercies3/common/widgets/app_button.dart';
+import 'package:exercies3/common/widgets/app_text_form_field.dart';
 import 'package:exercies3/controller/auth_controller.dart';
 import 'package:exercies3/model/user_entity.dart';
 import 'package:exercies3/providers/is_login_provider.dart';
@@ -34,7 +34,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
       child: Column(
         children: [
           SizedBox(height: isLogin ? 20.h : 0),
-          TextFormFieldWidget(
+          AppTextFormField(
             hintText: "Email",
             initialValue: user.email,
             validator: (value) {
@@ -47,7 +47,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
             },
           ),
           SizedBox(height: 20.h),
-          TextFormFieldWidget(
+          AppTextFormField(
             hintText: "Password",
             initialValue: user.password,
             isPass: true,
@@ -65,7 +65,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
             Column(
               children: [
                 SizedBox(height: 20.h),
-                TextFormFieldWidget(
+                AppTextFormField(
                   hintText: "Confirm Password",
                   initialValue: user.password,
                   isPass: true,
@@ -79,7 +79,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
               ],
             ),
           SizedBox(height: isLogin ? 50.h : 20.h),
-          ButtonWidget(
+          AppButton(
             ontap: () {
               didChangeDependencies.call();
               if(keyForm.currentState!.validate()) {

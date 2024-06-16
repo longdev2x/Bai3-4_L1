@@ -6,6 +6,7 @@ class AppTextFormField extends StatelessWidget {
   final bool? autofocus;
   final String? initialValue;
   final String? Function(String? value)? validator;
+  final void Function(String? value)? onSaved;
   final Function(String? value)? onChanged;
   final TextEditingController? controller;
   const AppTextFormField({
@@ -17,6 +18,7 @@ class AppTextFormField extends StatelessWidget {
     this.initialValue,
     this.autofocus = false,
     this.controller,
+    this.onSaved
   });
 
   @override
@@ -24,6 +26,7 @@ class AppTextFormField extends StatelessWidget {
     return TextFormField(
       onChanged: onChanged,
       validator: validator,
+      onSaved: onSaved,
       obscureText: isPass!,
       initialValue: initialValue,
       autofocus: autofocus ?? false,

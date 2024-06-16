@@ -1,4 +1,6 @@
+import 'package:exercies3/common/model/category_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
+import 'package:exercies3/common/widgets/app_confirm.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/view/widget/category_add_update.dart';
@@ -11,12 +13,41 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CategoryManagerScreen extends ConsumerWidget {
   const CategoryManagerScreen({super.key});
 
+  void _handleAdd(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) => const CategoryAddUpdate(),
+        isScrollControlled: true,
+        useSafeArea: true);
+  }
+
+  void _handleUpdate(BuildContext context, CategoryEntity category) {
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) => CategoryAddUpdate(categoryUpdate: category),
+        isScrollControlled: true,
+        useSafeArea: true);
+  }
+
+  void _handleDelete(BuildContext context, WidgetRef ref, String id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AppConfirm(
+        title: "Tất cả tác vụ trong danh mục này sẽ bị xoá.",
+        onConfirm: () {
+          ref.read(categoriesAsyncProvider.notifier).delete(id);
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoriesAsyncProvider);
     return Scaffold(
       appBar: AppBar(title: const Text("Quản lý Danh mục")),
-      body: Container(
+      body: Padding(
         padding: EdgeInsets.only(left: 6.w, top: 5.h),
         child: Column(
           children: [
@@ -32,18 +63,10 @@ class CategoryManagerScreen extends ConsumerWidget {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (ctx) => CategoryModalBottom(
-                                  onTapUpdate: () {
-                                    Navigator.pop(context);
-                                  },
-                                  onTapDelete: () {
-                                    ref
-                                        .read(categoriesAsyncProvider.notifier)
-                                        .delete(data[index].id);
-                                    Navigator.pop(context);
-                                  },
-                                  onTapCancle: () {
-                                    Navigator.pop(context);
-                                  },
+                                  onTapUpdate: () =>
+                                      _handleUpdate(context, data[index]),
+                                  onTapDelete: () => _handleDelete(
+                                      context, ref, data[index].id),
                                 ),
                               );
                             },
@@ -54,15 +77,8 @@ class CategoryManagerScreen extends ConsumerWidget {
                             },
                           )
                         : ListTile(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (ctx) => const CategoryAddUpdate(),
-                                isScrollControlled: true,
-                                useSafeArea: true
-                              );
-                            },
-                            leading: const AppIcon(path: ImageRes.icPersonal),
+                            onTap: () => _handleAdd(context),
+                            leading: const AppIcon(path: ImageRes.icCreate),
                             title: const Text("Tạo mới"),
                           ),
                   ),

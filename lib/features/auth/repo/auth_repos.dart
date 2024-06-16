@@ -1,4 +1,4 @@
-import 'package:exercies3/model/user_entity.dart';
+import 'package:exercies3/common/model/user_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepos {

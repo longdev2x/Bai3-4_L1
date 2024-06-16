@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class AppTextFormField extends StatelessWidget {
   final String? hintText;
   final bool? isPass;
+  final bool? autofocus;
   final String? initialValue;
   final String? Function(String? value)? validator;
   final Function(String? value)? onChanged;
+  final TextEditingController? controller;
   const AppTextFormField({
     super.key,
     this.hintText = "",
@@ -13,6 +15,8 @@ class AppTextFormField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.initialValue,
+    this.autofocus = false,
+    this.controller,
   });
 
   @override
@@ -22,6 +26,8 @@ class AppTextFormField extends StatelessWidget {
       validator: validator,
       obscureText: isPass!,
       initialValue: initialValue,
+      autofocus: autofocus ?? false,
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         enabledBorder: _customOutline(borderColor: Colors.blue),

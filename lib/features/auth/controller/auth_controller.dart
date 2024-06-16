@@ -1,10 +1,12 @@
+
+
+import 'package:exercies3/loader_provider.dart';
+import 'package:exercies3/common/model/user_entity.dart';
 import 'package:exercies3/common/widgets/app_dialog.dart';
-import 'package:exercies3/model/user_entity.dart';
-import 'package:exercies3/providers/is_login_provider.dart';
-import 'package:exercies3/providers/loader_provider.dart';
-import 'package:exercies3/providers/user_provider.dart';
-import 'package:exercies3/repos/auth_repos.dart';
-import 'package:exercies3/screens/home_screen.dart';
+import 'package:exercies3/features/application/view/application.dart';
+import 'package:exercies3/features/auth/provider/is_login_provider.dart';
+import 'package:exercies3/features/auth/provider/user_provider.dart';
+import 'package:exercies3/features/auth/repo/auth_repos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,6 @@ class AuthController {
       //Add username, photo...
       ref.read(isLoginProvider.notifier).switchScreen();
     } on FirebaseAuthException catch (e) {
-      print(e.code);
       ref.read(loaderProvider.notifier).updateLoader(false);
       switch (e.code) {
         case "email-already-in-use":
@@ -51,20 +52,19 @@ class AuthController {
     //Validate Firebase (first validate in Form)
     ref.read(loaderProvider.notifier).updateLoader(true);
     try {
-      UserCredential userCredential = await AuthRepos.loginWithFirebase(user);
+      await AuthRepos.loginWithFirebase(user);
       ref.read(loaderProvider.notifier).updateLoader(false);
       AppDialog.showToast("Đăng nhập thành công");
       //Save user token to local, sharedpreferences ...
       if (context.mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (ctx) => const HomeScreen(),
+            builder: (ctx) => const Application(),
           ),
           (route) => false,
         );
       }
     } on FirebaseAuthException catch (e) {
-      print(e.code);
       ref.read(loaderProvider.notifier).updateLoader(false);
       switch (e.code) {
         case "user-disabled":

@@ -1,10 +1,10 @@
 import 'package:exercies3/common/widgets/app_button.dart';
 import 'package:exercies3/common/widgets/app_text_form_field.dart';
-import 'package:exercies3/controller/auth_controller.dart';
-import 'package:exercies3/model/user_entity.dart';
-import 'package:exercies3/providers/is_login_provider.dart';
-import 'package:exercies3/providers/loader_provider.dart';
-import 'package:exercies3/providers/user_provider.dart';
+import 'package:exercies3/features/auth/controller/auth_controller.dart';
+import 'package:exercies3/common/model/user_entity.dart';
+import 'package:exercies3/features/auth/provider/is_login_provider.dart';
+import 'package:exercies3/loader_provider.dart';
+import 'package:exercies3/features/auth/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,8 +40,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
             hintText: "Email",
             initialValue: user.email,
             validator: (value) {
-              if (value == null || !value.contains("@"))
-                return "Email is not valid";
+              if (value == null || !value.contains("@")) return "Email is not valid";
               return null;
             },
             onChanged: (value) {
@@ -54,8 +53,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
             initialValue: user.password,
             isPass: true,
             validator: (value) {
-              if (value == null || value.trim().length < 6)
-                return "Username needs at least than 6 characters";
+              if (value == null || value.trim().length < 6) return "Username needs at least than 6 characters";
               return null;
             },
             onChanged: (value) {
@@ -72,8 +70,7 @@ class _AuthFormWidgetState extends ConsumerState<AuthFormWidget> {
                   initialValue: user.password,
                   isPass: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty || value != pass)
-                      return "Repassword not same";
+                    if (value == null || value.isEmpty || value != pass) return "Repassword not same";
                     return null;
                   },
                   onChanged: (value) {},

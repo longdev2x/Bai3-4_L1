@@ -40,6 +40,8 @@ dependencies:
   firebase_auth: ^4.17.8
   firebase_core: ^2.27.0
   fluttertoast: ^8.2.5
+  cloud_firestore: ^4.15.8
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

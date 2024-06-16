@@ -1,8 +1,8 @@
-import 'package:exercies3/common/image_res.dart';
-import 'package:exercies3/providers/loader_provider.dart';
-import 'package:exercies3/screens/widgets/auth_form.dart';
-import 'package:exercies3/screens/widgets/auth_title.dart';
-import 'package:exercies3/screens/widgets/auth_two_light.dart';
+import 'package:exercies3/features/auth/view/widget/auth_title.dart';
+import 'package:exercies3/loader_provider.dart';
+import 'package:exercies3/common/utils/image_res.dart';
+import 'package:exercies3/features/auth/view/widget/auth_form.dart';
+import 'package:exercies3/features/auth/view/widget/auth_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +25,7 @@ class AuthScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const AuthTwoLightWidget(),
+                const AuthLightWidget(),
                 SizedBox(height: 20.h),
                 const AuthTitle(),
                 SizedBox(height: 160.h),

@@ -1,16 +1,16 @@
-import 'package:exercies3/common/image_res.dart';
+import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_slide_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AuthTwoLightWidget extends StatefulWidget {
-  const AuthTwoLightWidget({super.key});
+class AuthLightWidget extends StatefulWidget {
+  const AuthLightWidget({super.key});
 
   @override
-  State<AuthTwoLightWidget> createState() => _AuthTwoLightWidgetState();
+  State<AuthLightWidget> createState() => _AuthLightWidgetState();
 }
 
-class _AuthTwoLightWidgetState extends State<AuthTwoLightWidget> {
+class _AuthLightWidgetState extends State<AuthLightWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(

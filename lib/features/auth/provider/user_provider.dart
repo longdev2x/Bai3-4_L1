@@ -1,4 +1,4 @@
-import 'package:exercies3/model/user_entity.dart';
+import 'package:exercies3/common/model/user_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserStateNotifier extends StateNotifier<UserEntity> {

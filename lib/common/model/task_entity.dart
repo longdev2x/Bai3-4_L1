@@ -6,29 +6,32 @@ class TaskEntity {
   final String mainTask;
   final bool? isDone;
   final List<String>? additionalTasks;
-  final DateTime? date;
+  final DateTime date;
   final DateTime? reminderDate;
   final bool? repeat;
   final String? categoryId;
+  final bool? isFlag;
 
   TaskEntity({
     String? id,
     required this.mainTask,
     this.isDone = false,
     this.additionalTasks,
-    this.date,
+    required this.date,
     this.reminderDate,
+    this.isFlag = false,
     this.repeat = false,
     this.categoryId,
   }) : id = id ?? const Uuid().v4();
 
   TaskEntity copyWith(
           {String? mainTask,
-          bool? isDone,
+          bool? isDone = false,
           List<String>? additionalTasks,
           DateTime? date,
           DateTime? reminderDate,
           bool? repeat = false,
+          bool? isFlag = false,
           String? categoryId}) =>
       TaskEntity(
         id: id,
@@ -38,6 +41,7 @@ class TaskEntity {
         date: date ?? this.date,
         reminderDate: reminderDate ?? this.reminderDate,
         repeat: repeat ?? this.repeat,
+        isFlag: isFlag ?? this.isFlag,
         categoryId: categoryId ?? this.categoryId,
       );
 
@@ -45,10 +49,11 @@ class TaskEntity {
         id: json['id'],
         mainTask: json['main_task'],
         isDone: json['is_done'],
-        additionalTasks: json['anditional_tasks'],
-        date: json['date'] != null ? (json['date'] as Timestamp).toDate() : null,
+        additionalTasks: List<String>.from(json['anditional_tasks']),
+        date: json['date'] != null ? (json['date'] as Timestamp).toDate() : DateTime.now(),
         reminderDate: json['reminder_date'] != null ? (json['reminder_date'] as Timestamp).toDate() : null,
-        repeat: json['repeat'] ?? false
+        repeat: json['repeat'] ?? false,
+        isFlag: json['is_flag'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -59,5 +64,6 @@ class TaskEntity {
     'date' : date,
     'reminder_date' : reminderDate,
     'repeat' : repeat,
+    'is_flase' : isFlag
   };
 }

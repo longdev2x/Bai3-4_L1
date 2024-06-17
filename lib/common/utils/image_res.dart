@@ -21,4 +21,10 @@ class ImageRes {
   static const String icCreate = "${_baseIcon}ic_create.png";
   static const String icDelete= "${_baseIcon}ic_delete.png";
   static const String icArrowRight= "${_baseIcon}ic_arrow_right.png";
+  static const String icRepeat= "${_baseIcon}ic_repeat.png";
+  static const String icSMS= "${_baseIcon}ic_sms.png";
+  static const String icAlarm= "${_baseIcon}ic_alarm.png";
+  static const String icFlag= "${_baseIcon}ic_flag.png";
+  static const String icNotification= "${_baseIcon}ic_notification.png";
+  static const String icDone= "${_baseIcon}ic_done.png";
 }

@@ -37,6 +37,7 @@ class CategoryManagerScreen extends ConsumerWidget {
         onConfirm: () {
           ref.read(categoriesAsyncProvider.notifier).delete(id);
           Navigator.of(context).pop();
+          Navigator.of(context).pop();
         },
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:exercies3/common/model/category_entity.dart';
-import 'package:exercies3/features/tasks/repo/category_repo.dart';
+import 'package:exercies3/features/tasks/repo/category_repos.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CategoriesAsyncNotifier extends AsyncNotifier<List<CategoryEntity>> {

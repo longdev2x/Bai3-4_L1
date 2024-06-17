@@ -37,7 +37,8 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    String icon = ref.watch(iconProviderFamily(widget.categoryUpdate?.icon ?? iconPaths[0]));
+    String icon = ref
+        .watch(iconProviderFamily(widget.categoryUpdate?.icon ?? iconPaths[0]));
     return Container(
       padding:
           EdgeInsets.only(left: 16.r, right: 16.r, top: 10.r, bottom: 50.h),
@@ -57,12 +58,18 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
             IconButton(
                 onPressed: () {
                   if (!formKey.currentState!.validate()) return;
-                  widget.categoryUpdate == null
-                  ? ref.read(categoriesAsyncProvider.notifier).add(
-                        _controller.text,
-                        icon,
-                      )
-                  : ref.read(categoriesAsyncProvider.notifier).updateCate(widget.categoryUpdate!.copyWith(name: _controller.text, icon: icon));
+                  if (widget.categoryUpdate == null) {
+                    ref.read(categoriesAsyncProvider.notifier).add(
+                          _controller.text,
+                          icon,
+                        );
+                    Navigator.pop(context);
+                    return;
+                  }
+                  ref.read(categoriesAsyncProvider.notifier).updateCate(widget
+                      .categoryUpdate!
+                      .copyWith(name: _controller.text, icon: icon));
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 icon: const AppIcon(path: ImageRes.icCheck)),
@@ -75,7 +82,8 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
             hintText: "Vui lòng nhập danh mục",
             autofocus: true,
             validator: (value) {
-              if (value == null || value.length < 3) return "Vui lòng nhập trên 3 ký tự";
+              if (value == null || value.length < 3)
+                return "Vui lòng nhập trên 3 ký tự";
               return null;
             },
             controller: _controller,
@@ -98,7 +106,11 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
             itemCount: iconPaths.length,
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () {
-                ref.read(iconProviderFamily(widget.categoryUpdate?.icon ?? iconPaths[0]).notifier).updateIcon(iconPaths[index]);
+                ref
+                    .read(iconProviderFamily(
+                            widget.categoryUpdate?.icon ?? iconPaths[0])
+                        .notifier)
+                    .updateIcon(iconPaths[index]);
               },
               child: AppIcon(
                 path: iconPaths[index],

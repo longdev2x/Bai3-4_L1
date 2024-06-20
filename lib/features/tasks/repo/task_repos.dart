@@ -11,7 +11,7 @@ class TaskRepos {
   }
 
   static Future<void> addTask(TaskEntity task) async {
-    await _instance.collection(AppConstants.cTask).add(task.toJson());
+    await _instance.collection(AppConstants.cTask).doc(task.id).set(task.toJson());
   }
 
   static Future<void> deleteTask(String id) async {

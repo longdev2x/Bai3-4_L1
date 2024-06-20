@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 class TaskEntity {
 
   final String id;
   final String mainTask;
-  final bool? isDone;
+  final bool isDone;
   final List<String>? additionalTasks;
   final DateTime date;
   final DateTime? reminderDate;
-  final bool? repeat;
+  final bool repeat;
   final String? categoryId;
-  final bool? isFlag;
+  final bool isFlag;
 
   TaskEntity({
     String? id,
@@ -42,7 +43,7 @@ class TaskEntity {
         reminderDate: reminderDate ?? this.reminderDate,
         repeat: repeat ?? this.repeat,
         isFlag: isFlag ?? this.isFlag,
-        categoryId: categoryId ?? this.categoryId,
+        categoryId: categoryId ?? this.categoryId
       );
 
   factory TaskEntity.fromJson(Map<String, dynamic> json) => TaskEntity(
@@ -54,6 +55,7 @@ class TaskEntity {
         reminderDate: json['reminder_date'] != null ? (json['reminder_date'] as Timestamp).toDate() : null,
         repeat: json['repeat'] ?? false,
         isFlag: json['is_flag'] ?? false,
+        categoryId: json['category_id']
       );
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +66,17 @@ class TaskEntity {
     'date' : date,
     'reminder_date' : reminderDate,
     'repeat' : repeat,
-    'is_flase' : isFlag
+    'is_flag' : isFlag,
+    'category_id' : categoryId
   };
+
+  String get formatDate {
+    final fomart = DateFormat("dd/MM - kk:mm");
+    return fomart.format(date);
+  }
+
+  String get formatReminderDate {
+    final fomart = DateFormat("dd/MM");
+    return fomart.format(reminderDate ?? DateTime(date.minute + 5));
+  }
 }

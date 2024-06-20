@@ -27,4 +27,6 @@ class ImageRes {
   static const String icFlag= "${_baseIcon}ic_flag.png";
   static const String icNotification= "${_baseIcon}ic_notification.png";
   static const String icDone= "${_baseIcon}ic_done.png";
+  static const String icShare = "${_baseIcon}ic_share.png";
+  static const String icPlus = "${_baseIcon}ic_plus.png";
 }

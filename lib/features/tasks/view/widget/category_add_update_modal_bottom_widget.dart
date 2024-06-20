@@ -8,23 +8,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CategoryAddUpdate extends ConsumerStatefulWidget {
+class CategoryAddUpdateModalBottomWidget extends ConsumerStatefulWidget {
   final CategoryEntity? categoryUpdate;
-  const CategoryAddUpdate({super.key, this.categoryUpdate});
+  const CategoryAddUpdateModalBottomWidget({super.key, this.categoryUpdate});
 
   @override
-  ConsumerState<CategoryAddUpdate> createState() => _CategoryAddUpdateState();
+  ConsumerState<CategoryAddUpdateModalBottomWidget> createState() => _CategoryAddUpdateModalBottomWidgetState();
 }
 
-class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
+class _CategoryAddUpdateModalBottomWidgetState extends ConsumerState<CategoryAddUpdateModalBottomWidget> {
+  CategoryEntity? category;
   final GlobalKey<FormState> formKey = GlobalKey();
   late final TextEditingController _controller;
 
   @override
   void initState() {
+    category = widget.categoryUpdate;
     _controller = TextEditingController();
-    if (widget.categoryUpdate != null) {
-      _controller.text = widget.categoryUpdate!.name;
+    if (category != null) {
+      _controller.text = category!.name;
     }
     super.initState();
   }
@@ -38,7 +40,7 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
   @override
   Widget build(BuildContext context) {
     String icon = ref
-        .watch(iconProviderFamily(widget.categoryUpdate?.icon ?? iconPaths[0]));
+        .watch(iconProviderFamily(category?.icon ?? iconPaths[0]));
     return Container(
       padding:
           EdgeInsets.only(left: 16.r, right: 16.r, top: 10.r, bottom: 50.h),
@@ -58,7 +60,7 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
             IconButton(
                 onPressed: () {
                   if (!formKey.currentState!.validate()) return;
-                  if (widget.categoryUpdate == null) {
+                  if (category == null) {
                     ref.read(categoriesAsyncProvider.notifier).add(
                           _controller.text,
                           icon,
@@ -66,9 +68,11 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
                     Navigator.pop(context);
                     return;
                   }
-                  ref.read(categoriesAsyncProvider.notifier).updateCate(widget
-                      .categoryUpdate!
-                      .copyWith(name: _controller.text, icon: icon));
+                  ref.read(categoriesAsyncProvider.notifier).updateCate(
+                    id: category!.id,
+                    name: _controller.text,
+                    icon: icon
+                  );
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
@@ -108,7 +112,7 @@ class _CategoryAddUpdateState extends ConsumerState<CategoryAddUpdate> {
               onTap: () {
                 ref
                     .read(iconProviderFamily(
-                            widget.categoryUpdate?.icon ?? iconPaths[0])
+                            category?.icon ?? iconPaths[0])
                         .notifier)
                     .updateIcon(iconPaths[index]);
               },

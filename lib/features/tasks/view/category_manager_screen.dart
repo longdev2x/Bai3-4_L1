@@ -3,9 +3,9 @@ import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_confirm.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
-import 'package:exercies3/features/tasks/view/widget/category_add_update.dart';
-import 'package:exercies3/features/tasks/view/widget/category_modal_bottom.dart';
-import 'package:exercies3/features/tasks/view/widget/category_veti_item.dart';
+import 'package:exercies3/features/tasks/view/widget/category_add_update_modal_bottom_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/category_modal_bottom_widget.dart';
+import 'package:exercies3/features/tasks/view/item/category_veti_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +16,7 @@ class CategoryManagerScreen extends ConsumerWidget {
   void _handleAdd(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        builder: (ctx) => const CategoryAddUpdate(),
+        builder: (ctx) => const CategoryAddUpdateModalBottomWidget(),
         isScrollControlled: true,
         useSafeArea: true);
   }
@@ -24,7 +24,7 @@ class CategoryManagerScreen extends ConsumerWidget {
   void _handleUpdate(BuildContext context, CategoryEntity category) {
     showModalBottomSheet(
         context: context,
-        builder: (ctx) => CategoryAddUpdate(categoryUpdate: category),
+        builder: (ctx) => CategoryAddUpdateModalBottomWidget(categoryUpdate: category),
         isScrollControlled: true,
         useSafeArea: true);
   }
@@ -63,7 +63,7 @@ class CategoryManagerScreen extends ConsumerWidget {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                builder: (ctx) => CategoryModalBottom(
+                                builder: (ctx) => CategoryModalBottomWidget(
                                   onTapUpdate: () =>
                                       _handleUpdate(context, data[index]),
                                   onTapDelete: () => _handleDelete(

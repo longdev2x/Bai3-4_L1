@@ -6,13 +6,15 @@ import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/provider/hori_index_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/category_manager_screen.dart';
-import 'package:exercies3/features/tasks/view/widget/task_iteam.dart';
-import 'package:exercies3/features/tasks/view/widget/tasks_app_bar.dart';
-import 'package:exercies3/features/tasks/view/widget/tasks_drawer.dart';
-import 'package:exercies3/features/tasks/view/widget/tasks_category_hori_item.dart';
+import 'package:exercies3/features/tasks/view/widget/add_task_modal_bottom_widget.dart';
+import 'package:exercies3/features/tasks/view/item/task_iteam.dart';
+import 'package:exercies3/features/tasks/view/widget/tasks_app_bar_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/tasks_drawer_widget.dart';
+import 'package:exercies3/features/tasks/view/item/tasks_category_hori_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -22,81 +24,8 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    _controller = TextEditingController();
-    super.initState();
-  }
-
   void _updateIndex(WidgetRef ref, int index) =>
       ref.read(horiIndexProvider.notifier).update(index);
-
-  void _addTask(WidgetRef ref, List<CategoryEntity> categories) {
-    CategoryEntity category = categories[2];
-    showModalBottomSheet(
-        context: ref.context,
-        builder: (ctx) => Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.r, vertical: 15.r),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
-              ),
-              child: Column(children: [
-                TextField(
-                  decoration: const InputDecoration(
-                    hintText: "Nhập nhiệm vụ mới tại đây",
-                  ),
-                  controller: _controller,
-                ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text(category.name),
-                    ),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const AppIcon(path: ImageRes.icAlarm)),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const AppIcon(path: ImageRes.icNotification)),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const AppIcon(path: ImageRes.icRepeat)),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const AppIcon(path: ImageRes.icSMS)),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const AppIcon(path: ImageRes.icFlag)),
-                    IconButton(
-                      onPressed: () {
-                        ref.read(tasksAsyncProvider.notifier).addTask(
-                              TaskEntity(
-                                  mainTask: "Test Thu 1",
-                                  date: DateTime.now(),
-                                  additionalTasks: ["Ok"],
-                                  categoryId: category.id,
-                                  isDone: false,
-                                  reminderDate: DateTime.now(),
-                                  isFlag: true,
-                                  repeat: true),
-                            );
-                      },
-                      icon: AppIcon(
-                        path: ImageRes.icDone,
-                        size: 27.r,
-                        iconColor: Colors.purple,
-                      ),
-                    ),
-                  ],
-                ),
-              ]),
-            ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +33,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final int indexChose = ref.watch(horiIndexProvider);
     final AsyncValue<List<TaskEntity>> tasks = ref.watch(tasksAsyncProvider);
     return Scaffold(
-      appBar: tasksAppBar(),
-      drawer: const TaskDrawer(),
+      appBar: tasksAppBarWidget(),
+      drawer: const TaskDrawerWidget(),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.r),
         child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -164,35 +93,38 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           tasks.when(
             data: (data) {
               return Expanded(
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (ctx, index) {
-                    print("Ok data - ${data[index].toJson()}");
-                    print(data[index].id);
-                    print(data[index].mainTask);
-                    print(data[index].additionalTasks?[0]);
-                    print(data[index].date);
-                    print(data[index].reminderDate);
-                    print(data[index].isDone);
-                    print(data[index].isFlag);
-                    return TaskItem(task: data[index]);
-                  },
-                ),
-              );
+                  child: SlidableAutoCloseBehavior(
+                      child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (ctx, index) {
+                            return TaskItem(task: data[index]);
+                          })));
             },
             error: (error, stackTrace) {
-              print("error- $error");
-              print("statce- $stackTrace");
-              return Expanded(
-                  child: Container(
-                child: Text("Error-$stackTrace"),
-              ));
+              return Expanded(child: Center(child: Text("Error-$stackTrace")));
             },
-            loading: () => const CircularProgressIndicator(),
+            loading: () => const Center(child: CircularProgressIndicator()),
           ),
-          ElevatedButton(
-              onPressed: () => _addTask(ref, categories.value!),
-              child: const Text("Add")),
+          GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                  context: context, builder: (ctx) => const AddTaskModalBottomWidget());
+            },
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: EdgeInsets.all(12.r),
+                margin: EdgeInsets.only(bottom: 10.h),
+                height: 50.h,
+                width: 50.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25.r),
+                    color: const Color.fromRGBO(10, 147, 254, 1)),
+                child: const AppIcon(
+                    path: ImageRes.icPlus, iconColor: Colors.white),
+              ),
+            ),
+          ),
         ]),
       ),
     );

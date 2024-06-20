@@ -3,10 +3,10 @@ import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CategoryModalBottomWidget extends StatelessWidget {
+class CategoryActionWidget extends StatelessWidget {
   final Function() onTapUpdate;
   final Function() onTapDelete;
-  const CategoryModalBottomWidget({
+  const CategoryActionWidget({
     super.key,
     required this.onTapUpdate,
     required this.onTapDelete,

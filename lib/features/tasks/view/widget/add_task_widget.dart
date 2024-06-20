@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddTaskModalBottomWidget extends ConsumerStatefulWidget {
-  const AddTaskModalBottomWidget({super.key});
+class AddTaskWidget extends ConsumerStatefulWidget {
+  const AddTaskWidget({super.key});
 
   @override
-  ConsumerState<AddTaskModalBottomWidget> createState() => _AddTaskModalBottomWidgetState();
+  ConsumerState<AddTaskWidget> createState() => _AddTaskWidgetState();
 }
 
-class _AddTaskModalBottomWidgetState extends ConsumerState<AddTaskModalBottomWidget> {
+class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
   late final TextEditingController _controller;
   String nameChosed = "Không có thể loại";
 

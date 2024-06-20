@@ -1,4 +1,3 @@
-import 'package:exercies3/common/model/category_entity.dart';
 import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
@@ -6,7 +5,7 @@ import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/provider/hori_index_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/category_manager_screen.dart';
-import 'package:exercies3/features/tasks/view/widget/add_task_modal_bottom_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/add_task_widget.dart';
 import 'package:exercies3/features/tasks/view/item/task_iteam.dart';
 import 'package:exercies3/features/tasks/view/widget/tasks_app_bar_widget.dart';
 import 'package:exercies3/features/tasks/view/widget/tasks_drawer_widget.dart';
@@ -108,7 +107,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           GestureDetector(
             onTap: () {
               showModalBottomSheet(
-                  context: context, builder: (ctx) => const AddTaskModalBottomWidget());
+                  context: context, builder: (ctx) => const AddTaskWidget());
             },
             child: Align(
               alignment: Alignment.centerRight,

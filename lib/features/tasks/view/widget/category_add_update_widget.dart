@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CategoryAddUpdateModalBottomWidget extends ConsumerStatefulWidget {
+class CategoryAddUpdateWidget extends ConsumerStatefulWidget {
   final CategoryEntity? categoryUpdate;
-  const CategoryAddUpdateModalBottomWidget({super.key, this.categoryUpdate});
+  const CategoryAddUpdateWidget({super.key, this.categoryUpdate});
 
   @override
-  ConsumerState<CategoryAddUpdateModalBottomWidget> createState() => _CategoryAddUpdateModalBottomWidgetState();
+  ConsumerState<CategoryAddUpdateWidget> createState() => _CategoryAddUpdateWidgetState();
 }
 
-class _CategoryAddUpdateModalBottomWidgetState extends ConsumerState<CategoryAddUpdateModalBottomWidget> {
+class _CategoryAddUpdateWidgetState extends ConsumerState<CategoryAddUpdateWidget> {
   CategoryEntity? category;
   final GlobalKey<FormState> formKey = GlobalKey();
   late final TextEditingController _controller;

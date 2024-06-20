@@ -3,8 +3,8 @@ import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_confirm.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
-import 'package:exercies3/features/tasks/view/widget/category_add_update_modal_bottom_widget.dart';
-import 'package:exercies3/features/tasks/view/widget/category_modal_bottom_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/category_add_update_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/category_action_widget.dart';
 import 'package:exercies3/features/tasks/view/item/category_veti_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +16,7 @@ class CategoryManagerScreen extends ConsumerWidget {
   void _handleAdd(BuildContext context) {
     showModalBottomSheet(
         context: context,
-        builder: (ctx) => const CategoryAddUpdateModalBottomWidget(),
+        builder: (ctx) => const CategoryAddUpdateWidget(),
         isScrollControlled: true,
         useSafeArea: true);
   }
@@ -24,7 +24,7 @@ class CategoryManagerScreen extends ConsumerWidget {
   void _handleUpdate(BuildContext context, CategoryEntity category) {
     showModalBottomSheet(
         context: context,
-        builder: (ctx) => CategoryAddUpdateModalBottomWidget(categoryUpdate: category),
+        builder: (ctx) => CategoryAddUpdateWidget(categoryUpdate: category),
         isScrollControlled: true,
         useSafeArea: true);
   }
@@ -63,7 +63,7 @@ class CategoryManagerScreen extends ConsumerWidget {
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
-                                builder: (ctx) => CategoryModalBottomWidget(
+                                builder: (ctx) => CategoryActionWidget(
                                   onTapUpdate: () =>
                                       _handleUpdate(context, data[index]),
                                   onTapDelete: () => _handleDelete(

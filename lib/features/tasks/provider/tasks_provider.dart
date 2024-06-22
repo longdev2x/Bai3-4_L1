@@ -16,7 +16,8 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     return await TaskRepos.getAll();
   }
 
-  Future<void> addTask(TaskEntity task) async {
+  Future<void> addTask() async {
+    TaskEntity task = ref.read(addTaskLocalProvider);
     //local, gán chứ không add vào value cũ vì như vậy
     //sẽ không thay đổi địa chỉ ô nhớ. không update
     // state = AsyncData([...state.value!, task]); (Cách này cần dùng !)
@@ -32,6 +33,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
       }
     } finally {
       state = await AsyncValue.guard(() async => await _loadAll());
+      ref.read(addTaskLocalProvider.notifier).resetTaskLocal();
       // ref.invalidateSelf() dùng để dispose chính provider hiện tại rồi init provider mới.
       //Dùng cách này chỉ dùng khi reload list, còn update thì không nên
     }
@@ -67,7 +69,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     state = state.whenData((tasks) {
       return tasks.map((task) {
         if (task.id == id) {
-          //copyWith cơ bản chỉ là tạo bản sao. phải gán lại thì mới làm thay 
+          //copyWith cơ bản chỉ là tạo bản sao. phải gán lại thì mới làm thay
           //đổi ở nhớ của list
           task = task.copyWith(
             mainTask: mainTask,
@@ -83,7 +85,8 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
       }).toList();
     });
     //send to sever
-    TaskEntity? updateTask = state.value?.firstWhere((element) => element.id == id);
+    TaskEntity? updateTask =
+        state.value?.firstWhere((element) => element.id == id);
     if (updateTask == null) return;
     try {
       await TaskRepos.updateTask(updateTask);
@@ -101,10 +104,16 @@ final tasksAsyncProvider =
     AsyncNotifierProvider<TasksAsyncNotifier, List<TaskEntity>>(
         () => TasksAsyncNotifier());
 
+final List<int> durationMinutes = [5, 15, 30, 60, 180, 1440];
+final List<String> repeatAccordings = ["giờ", "ngày", "tuần", "tháng"];
+
 //Add Task Local
 class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
   AddTaskLocalNotifier()
-      : super(TaskEntity(mainTask: "", date: DateTime.now()));
+      : super(TaskEntity(
+          mainTask: "",
+          date: DateTime.now(),
+        ));
 
   void updateTaskLocal({
     String? mainTask,
@@ -126,18 +135,23 @@ class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
           day: selectedDate?.day,
           hour: selectedTime?.inHours,
           minute: selectedTime?.inMinutes),
-      reminderDate: state.date.subtract(reminderDuration ?? const Duration(minutes: 5)),
+      reminderDate:
+          state.date.subtract(reminderDuration ?? const Duration(minutes: 25)),
       isFlag: isFlag,
       repeat: repeat,
       categoryId: categoryId,
     );
   }
+
+  void resetTaskLocal() {
+    state = TaskEntity(mainTask: "", date: DateTime.now());
+  }
 }
 
 final addTaskLocalProvider =
     StateNotifierProvider<AddTaskLocalNotifier, TaskEntity>(
-        (ref) => AddTaskLocalNotifier());
+  (ref) => AddTaskLocalNotifier(),
+);
 
-
-final List<int> durationMinutes = [5, 15, 30, 60, 180, 1440];
-final reminderProvider = StateProvider<int>((ref) => durationMinutes[0]);
+//Additional Task
+final totalAdditionTaskProvider = StateProvider<int>((ref) => -1);

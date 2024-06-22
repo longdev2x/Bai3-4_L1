@@ -1,8 +1,13 @@
+import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
+import 'package:exercies3/common/widgets/app_dialog.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/widget/date_picker_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/reminder_date_picker.dart';
+import 'package:exercies3/features/tasks/view/widget/repeat_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,7 +37,8 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final addTaskLocal = ref.watch(addTaskLocalProvider);
+    final TaskEntity addTaskLocal = ref.watch(addTaskLocalProvider);
+    final int totalAdd = ref.watch(totalAdditionTaskProvider);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 15.r),
       decoration: const BoxDecoration(
@@ -107,7 +113,11 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
             ),
             GestureDetector(
                 onTap: () {
-                  showModalBottomSheet(context: context, isScrollControlled: true, useSafeArea: true, builder: (context) => const DatePickerWidget());
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      useSafeArea: true,
+                      builder: (context) => const DatePickerWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -117,7 +127,11 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   ),
                 )),
             GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  showCupertinoModalPopup(
+                      context: context,
+                      builder: (ctx) => const ReminderDatePicker());
+                },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
@@ -128,16 +142,21 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   ),
                 )),
             GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  showCupertinoModalPopup(context: context, builder: (ctx) => const RepeatWidget());
+                },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icRepeat,
-                    iconColor: addTaskLocal.repeat != null ? Colors.purple : null,
+                    iconColor:
+                        addTaskLocal.repeat != null ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  ref.read(totalAdditionTaskProvider.notifier).state + 1;
+                },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
@@ -148,7 +167,11 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   ),
                 )),
             GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  ref
+                      .read(addTaskLocalProvider.notifier)
+                      .updateTaskLocal(isFlag: !addTaskLocal.isFlag);
+                },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
@@ -157,7 +180,16 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   ),
                 )),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                String mainTask = _controller.text;
+                if(mainTask.trim().isEmpty || mainTask.length < 3) {
+                  AppDialog.showToast("Nhiệm vụ phải từ 3 ký tự");
+                  return;
+                }
+                ref.read(addTaskLocalProvider.notifier).updateTaskLocal(mainTask: mainTask);
+                ref.read(tasksAsyncProvider.notifier).addTask();
+                Navigator.pop(context);
+              },
               child: AppIcon(
                 path: ImageRes.icDone,
                 size: 40.r,

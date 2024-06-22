@@ -9,6 +9,7 @@ import 'package:exercies3/features/tasks/view/item/task_iteam.dart';
 import 'package:exercies3/features/tasks/view/widget/tasks_app_bar_widget.dart';
 import 'package:exercies3/features/tasks/view/widget/tasks_drawer_widget.dart';
 import 'package:exercies3/features/tasks/view/item/tasks_category_hori_item.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,6 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
-
   void _updateIndex(WidgetRef ref, int index) =>
       ref.read(horiIndexProvider.notifier).state = index;
 
@@ -100,6 +100,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           })));
             },
             error: (error, stackTrace) {
+              if (kDebugMode) {
+                print("error-$error, stackTrace-$stackTrace");
+              }
               return Expanded(child: Center(child: Text("Error-$stackTrace")));
             },
             loading: () => const Center(child: CircularProgressIndicator()),

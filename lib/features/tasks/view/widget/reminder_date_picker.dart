@@ -1,3 +1,4 @@
+import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/widgets/app_title_bottom_sheet.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,10 @@ class ReminderDatePicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupValue = ref.watch(reminderProvider);
+    final TaskEntity task = ref.watch(addTaskLocalProvider);
+    final DateTime date = task.date;
+    final int groupValue = task.reminderDate != null ? date.difference(task.reminderDate!).inMinutes : durationMinutes[0];
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       bottomSheet: Container(
@@ -20,6 +24,7 @@ class ReminderDatePicker extends ConsumerWidget {
               name: "Nhắc nhở lúc",
               onPressed: () {
                 ref.read(addTaskLocalProvider.notifier).updateTaskLocal(reminderDuration: Duration(minutes: groupValue));
+                Navigator.pop(context);
               },
             ),
             ...durationMinutes
@@ -28,7 +33,7 @@ class ReminderDatePicker extends ConsumerWidget {
                       value: minutes,
                       groupValue: groupValue,
                       onChanged: (value) {
-                        ref.read(reminderProvider.notifier).state = value ?? durationMinutes[0];
+                        ref.read(addTaskLocalProvider.notifier).updateTaskLocal(reminderDuration: Duration(minutes: value ?? durationMinutes[0]));
                       },
                       child: Text("Trước ${minutes < 60 ? minutes.toString() : "${(minutes~/60)} giờ : ${minutes%60} phút"}")),
                 )

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-class TaskEntity {
 
+class TaskEntity {
   final String id;
   final String mainTask;
   final bool isDone;
@@ -35,40 +35,44 @@ class TaskEntity {
           bool? isFlag = false,
           String? categoryId}) =>
       TaskEntity(
-        id: id,
-        mainTask: mainTask ?? this.mainTask,
-        isDone: isDone ?? this.isDone,
-        additionalTasks: additionalTasks ?? this.additionalTasks,
-        date: date ?? this.date,
-        reminderDate: reminderDate ?? this.reminderDate,
-        repeat: repeat ?? this.repeat,
-        isFlag: isFlag ?? this.isFlag,
-        categoryId: categoryId ?? this.categoryId
-      );
+          id: id,
+          mainTask: mainTask ?? this.mainTask,
+          isDone: isDone ?? this.isDone,
+          additionalTasks: additionalTasks ?? this.additionalTasks,
+          date: date ?? this.date,
+          reminderDate: reminderDate ?? this.reminderDate,
+          repeat: repeat ?? this.repeat,
+          isFlag: isFlag ?? this.isFlag,
+          categoryId: categoryId ?? this.categoryId);
 
   factory TaskEntity.fromJson(Map<String, dynamic> json) => TaskEntity(
-        id: json['id'],
-        mainTask: json['main_task'],
-        isDone: json['is_done'],
-        additionalTasks: List<String>.from(json['anditional_tasks']),
-        date: json['date'] != null ? (json['date'] as Timestamp).toDate() : DateTime.now(),
-        reminderDate: json['reminder_date'] != null ? (json['reminder_date'] as Timestamp).toDate() : null,
-        repeat: json['repeat'],
-        isFlag: json['is_flag'] ?? false,
-        categoryId: json['category_id']
-      );
+      id: json['id'],
+      mainTask: json['main_task'],
+      isDone: json['is_done'],
+      additionalTasks: json['anditional_tasks'] != null
+          ? List<String>.from(json['anditional_tasks'])
+          : null,
+      date: json['date'] != null
+          ? (json['date'] as Timestamp).toDate()
+          : DateTime.now(),
+      reminderDate: json['reminder_date'] != null
+          ? (json['reminder_date'] as Timestamp).toDate()
+          : null,
+      repeat: json['repeat'],
+      isFlag: json['is_flag'] ?? false,
+      categoryId: json['category_id']);
 
   Map<String, dynamic> toJson() => {
-    'id' : id,
-    'main_task' : mainTask,
-    'is_done' : isDone,
-    'anditional_tasks' : additionalTasks,
-    'date' : date,
-    'reminder_date' : reminderDate,
-    'repeat' : repeat,
-    'is_flag' : isFlag,
-    'category_id' : categoryId
-  };
+        'id': id,
+        'main_task': mainTask,
+        'is_done': isDone,
+        'anditional_tasks': additionalTasks,
+        'date': date,
+        'reminder_date': reminderDate,
+        'repeat': repeat,
+        'is_flag': isFlag,
+        'category_id': categoryId
+      };
 
   String get formatDate {
     final fomart = DateFormat("dd/MM - kk:mm");

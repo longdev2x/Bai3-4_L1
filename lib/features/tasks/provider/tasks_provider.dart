@@ -112,7 +112,7 @@ class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
     int? year,
     DateTime? selectedDate,
     Duration? selectedTime,
-    DateTime? reminderDate,
+    Duration? reminderDuration,
     bool? isFlag,
     String? repeat,
     String? categoryId,
@@ -126,7 +126,7 @@ class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
           day: selectedDate?.day,
           hour: selectedTime?.inHours,
           minute: selectedTime?.inMinutes),
-      reminderDate: reminderDate,
+      reminderDate: state.date.subtract(reminderDuration ?? const Duration(minutes: 5)),
       isFlag: isFlag,
       repeat: repeat,
       categoryId: categoryId,
@@ -137,3 +137,7 @@ class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
 final addTaskLocalProvider =
     StateNotifierProvider<AddTaskLocalNotifier, TaskEntity>(
         (ref) => AddTaskLocalNotifier());
+
+
+final List<int> durationMinutes = [5, 15, 30, 60, 180, 1440];
+final reminderProvider = StateProvider<int>((ref) => durationMinutes[0]);

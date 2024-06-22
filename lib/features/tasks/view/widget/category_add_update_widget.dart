@@ -94,8 +94,7 @@ class _CategoryAddUpdateWidgetState
               onTap: () {
                 ref
                     .read(iconProviderFamily(category?.icon ?? iconPaths[0])
-                        .notifier)
-                    .updateIcon(iconPaths[index]);
+                        .notifier).state = iconPaths[index];
               },
               child: AppIcon(
                 path: iconPaths[index],

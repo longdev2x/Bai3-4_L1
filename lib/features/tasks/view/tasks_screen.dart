@@ -22,8 +22,9 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
+
   void _updateIndex(WidgetRef ref, int index) =>
-      ref.read(horiIndexProvider.notifier).update(index);
+      ref.read(horiIndexProvider.notifier).state = index;
 
   @override
   Widget build(BuildContext context) {

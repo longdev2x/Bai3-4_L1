@@ -1,3 +1,4 @@
+import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/common/widgets/app_title_bottom_sheet.dart';
@@ -14,7 +15,7 @@ class DatePickerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    DateTime currentDateTime = ref.watch(addTaskLocalProvider).date;
+    TaskEntity task = ref.watch(addTaskLocalProvider);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 20.r),
       child: Column(children: [
@@ -25,7 +26,7 @@ class DatePickerWidget extends ConsumerWidget {
             onDateChanged: (value) {
               ref.read(addTaskLocalProvider.notifier).updateTaskLocal(selectedDate: value);
             },
-            initialDate:  currentDateTime,
+            initialDate:  task.date,
             firstDate: DateTime.now(),
             lastDate: DateTime(DateTime.now().year + 10),
             initialCalendarMode: DatePickerMode.day,
@@ -41,12 +42,12 @@ class DatePickerWidget extends ConsumerWidget {
                   onTimeChange: (duration) {
                     ref.read(addTaskLocalProvider.notifier).updateTaskLocal(selectedTime: duration);
                   },
-                  currentTimerDuration: Duration(hours: currentDateTime.hour, minutes: currentDateTime.minute),
+                  currentTimerDuration: Duration(hours: task.date.hour, minutes: task.date.minute),
                 ),
               ),
               leading: const AppIcon(path: ImageRes.icAlarm),
               title: const Text('Thời gian'),
-              trailing: Text("${currentDateTime.hour}:${currentDateTime.minute}", style: TextStyle(fontSize: 17.sp),),
+              trailing: Text("${task.date.hour}h:${task.date.minute}p", style: TextStyle(fontSize: 17.sp),),
             ),
             ListTile(
               onTap: () {
@@ -54,7 +55,7 @@ class DatePickerWidget extends ConsumerWidget {
               },
               leading: const AppIcon(path: ImageRes.icNotification),
               title: const Text('Lời nhắc lúc'),
-              trailing: Text('Không', style: TextStyle(fontSize: 17.sp),),
+              trailing: Text(task.reminderDate != null ? "${task.reminderDate?.hour}h:${task.reminderDate?.minute}p" : 'Không', style: TextStyle(fontSize: 17.sp),),
             ),
             ListTile(
               leading: const AppIcon(path: ImageRes.icRepeat),

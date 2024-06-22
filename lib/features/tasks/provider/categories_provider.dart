@@ -97,23 +97,7 @@ List<String> iconPaths = [
   ImageRes.icSport,
   ImageRes.icWork,
 ];
-class IconStateNotifier extends StateNotifier<String> {
-  IconStateNotifier(String iconInitial) : super(iconInitial);
-
-  void updateIcon(String icon) {
-    state = icon;
-  }
-}
-final iconProviderFamily = StateNotifierProviderFamily<IconStateNotifier, String, String>((ref, iconInitial) => IconStateNotifier(iconInitial));
-
+final iconProviderFamily = StateProvider.family<String, String>((ref, arg) => arg);
 
 //Hori index of ScrollBar Horizontal of Category in TaskScreen
-class HoriIndexStateNotifier extends StateNotifier<int> {
-  HoriIndexStateNotifier() : super(0);
-  
-  void update(int index) {
-    state = index;
-  }
-}
-
-final horiIndexProvider = StateNotifierProvider<HoriIndexStateNotifier, int>((ref) => HoriIndexStateNotifier());
+final horiIndexProvider = StateProvider<int>((ref) => 0);

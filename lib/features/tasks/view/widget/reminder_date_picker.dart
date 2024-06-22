@@ -1,4 +1,5 @@
 import 'package:exercies3/common/widgets/app_title_bottom_sheet.dart';
+import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +9,7 @@ class ReminderDatePicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<int> durationMinutes = [5, 15, 30, 60, 180, 1440];
+    final groupValue = ref.watch(reminderProvider);
     return Scaffold(
       backgroundColor: Colors.transparent,
       bottomSheet: Container(
@@ -17,15 +18,17 @@ class ReminderDatePicker extends ConsumerWidget {
           child: Column(children: [
             AppTitleBottomSheet(
               name: "Nhắc nhở lúc",
-              onPressed: () {},
+              onPressed: () {
+                ref.read(addTaskLocalProvider.notifier).updateTaskLocal(reminderDuration: Duration(minutes: groupValue));
+              },
             ),
             ...durationMinutes
                 .map(
                   (minutes) => RadioMenuButton<int>(
                       value: minutes,
-                      groupValue: durationMinutes[3],
+                      groupValue: groupValue,
                       onChanged: (value) {
-                        
+                        ref.read(reminderProvider.notifier).state = value ?? durationMinutes[0];
                       },
                       child: Text("Trước ${minutes < 60 ? minutes.toString() : "${(minutes~/60)} giờ : ${minutes%60} phút"}")),
                 )

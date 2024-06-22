@@ -1,7 +1,7 @@
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
-import 'package:exercies3/features/tasks/provider/add_task_local_provider.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
+import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/widget/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +33,6 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
   @override
   Widget build(BuildContext context) {
     final addTaskLocal = ref.watch(addTaskLocalProvider);
-
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 15.r),
       decoration: const BoxDecoration(

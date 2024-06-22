@@ -1,9 +1,8 @@
 import 'package:exercies3/common/model/category_entity.dart';
-import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/common/widgets/app_text_form_field.dart';
+import 'package:exercies3/common/widgets/app_title_bottom_sheet.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
-import 'package:exercies3/features/tasks/provider/icon_provider_family.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,10 +12,12 @@ class CategoryAddUpdateWidget extends ConsumerStatefulWidget {
   const CategoryAddUpdateWidget({super.key, this.categoryUpdate});
 
   @override
-  ConsumerState<CategoryAddUpdateWidget> createState() => _CategoryAddUpdateWidgetState();
+  ConsumerState<CategoryAddUpdateWidget> createState() =>
+      _CategoryAddUpdateWidgetState();
 }
 
-class _CategoryAddUpdateWidgetState extends ConsumerState<CategoryAddUpdateWidget> {
+class _CategoryAddUpdateWidgetState
+    extends ConsumerState<CategoryAddUpdateWidget> {
   CategoryEntity? category;
   final GlobalKey<FormState> formKey = GlobalKey();
   late final TextEditingController _controller;
@@ -39,46 +40,28 @@ class _CategoryAddUpdateWidgetState extends ConsumerState<CategoryAddUpdateWidge
 
   @override
   Widget build(BuildContext context) {
-    String icon = ref
-        .watch(iconProviderFamily(category?.icon ?? iconPaths[0]));
+    String icon = ref.watch(iconProviderFamily(category?.icon ?? iconPaths[0]));
     return Container(
       padding:
           EdgeInsets.only(left: 16.r, right: 16.r, top: 10.r, bottom: 50.h),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const AppIcon(path: ImageRes.icClose)),
-            Text(
-              "Tạo danh mục mới",
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
-            ),
-            IconButton(
-                onPressed: () {
-                  if (!formKey.currentState!.validate()) return;
-                  if (category == null) {
-                    ref.read(categoriesAsyncProvider.notifier).add(
-                          _controller.text,
-                          icon,
-                        );
-                    Navigator.pop(context);
-                    return;
-                  }
-                  ref.read(categoriesAsyncProvider.notifier).updateCate(
-                    id: category!.id,
-                    name: _controller.text,
-                    icon: icon
-                  );
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                icon: const AppIcon(path: ImageRes.icCheck)),
-          ],
-        ),
+        AppTitleBottomSheet(
+            name: "Tạo danh mục mới",
+            onPressed: () {
+              if (!formKey.currentState!.validate()) return;
+              if (category == null) {
+                ref.read(categoriesAsyncProvider.notifier).add(
+                      _controller.text,
+                      icon,
+                    );
+                Navigator.pop(context);
+                return;
+              }
+              ref.read(categoriesAsyncProvider.notifier).updateCate(
+                  id: category!.id, name: _controller.text, icon: icon);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }),
         SizedBox(height: 10.h),
         Form(
           key: formKey,
@@ -86,8 +69,7 @@ class _CategoryAddUpdateWidgetState extends ConsumerState<CategoryAddUpdateWidge
             hintText: "Vui lòng nhập danh mục",
             autofocus: true,
             validator: (value) {
-              if (value == null || value.length < 3)
-                return "Vui lòng nhập trên 3 ký tự";
+              if (value == null || value.length < 3) return "Vui lòng nhập trên 3 ký tự";
               return null;
             },
             controller: _controller,
@@ -111,8 +93,7 @@ class _CategoryAddUpdateWidgetState extends ConsumerState<CategoryAddUpdateWidge
             itemBuilder: (ctx, index) => GestureDetector(
               onTap: () {
                 ref
-                    .read(iconProviderFamily(
-                            category?.icon ?? iconPaths[0])
+                    .read(iconProviderFamily(category?.icon ?? iconPaths[0])
                         .notifier)
                     .updateIcon(iconPaths[index]);
               },

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exercies3/common/model/category_entity.dart';
+import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/features/tasks/repo/category_repos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,3 +84,36 @@ final categoriesAsyncProvider =
     AsyncNotifierProvider<CategoriesAsyncNotifier, List<CategoryEntity>>(
   () => CategoriesAsyncNotifier(),
 );
+
+
+//Icon Of Category Provider Family
+List<String> iconPaths = [
+  ImageRes.icBirth,
+  ImageRes.icCoffee,
+  ImageRes.icEat,
+  ImageRes.icFight,
+  ImageRes.icHospital,
+  ImageRes.icLearn,
+  ImageRes.icSport,
+  ImageRes.icWork,
+];
+class IconStateNotifier extends StateNotifier<String> {
+  IconStateNotifier(String iconInitial) : super(iconInitial);
+
+  void updateIcon(String icon) {
+    state = icon;
+  }
+}
+final iconProviderFamily = StateNotifierProviderFamily<IconStateNotifier, String, String>((ref, iconInitial) => IconStateNotifier(iconInitial));
+
+
+//Hori index of ScrollBar Horizontal of Category in TaskScreen
+class HoriIndexStateNotifier extends StateNotifier<int> {
+  HoriIndexStateNotifier() : super(0);
+  
+  void update(int index) {
+    state = index;
+  }
+}
+
+final horiIndexProvider = StateNotifierProvider<HoriIndexStateNotifier, int>((ref) => HoriIndexStateNotifier());

@@ -112,7 +112,7 @@ class TaskItem extends ConsumerWidget {
                               padding: EdgeInsets.only(right: 5.w),
                               child: const AppIcon(path: ImageRes.icSMS),
                             ),
-                          if (task.repeat)
+                          if (task.repeat != null)
                             Padding(
                               padding: EdgeInsets.only(right: 5.w),
                               child: const AppIcon(path: ImageRes.icRepeat),

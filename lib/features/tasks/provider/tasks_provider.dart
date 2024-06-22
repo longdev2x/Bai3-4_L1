@@ -45,7 +45,9 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     try {
       await TaskRepos.deleteTask(id);
     } on FirebaseException catch (e) {
-      print("error when delete - ${e.message}");
+      if (kDebugMode) {
+        print("error when delete - ${e.message}");
+      }
     } finally {
       state = await AsyncValue.guard(() async => await _loadAll());
     }
@@ -60,7 +62,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     DateTime? reminderDate,
     bool? isDone,
     bool? isFlag,
-    bool? repeat,
+    String? repeat,
   }) async {
     state = state.whenData((tasks) {
       return tasks.map((task) {
@@ -86,7 +88,9 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     try {
       await TaskRepos.updateTask(updateTask);
     } on FirebaseException catch (e) {
-      print("error update - ${e.message}");
+      if (kDebugMode) {
+        print("error update - ${e.message}");
+      }
     } finally {
       state = await AsyncValue.guard(() async => await _loadAll());
     }
@@ -96,3 +100,40 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
 final tasksAsyncProvider =
     AsyncNotifierProvider<TasksAsyncNotifier, List<TaskEntity>>(
         () => TasksAsyncNotifier());
+
+//Add Task Local
+class AddTaskLocalNotifier extends StateNotifier<TaskEntity> {
+  AddTaskLocalNotifier()
+      : super(TaskEntity(mainTask: "", date: DateTime.now()));
+
+  void updateTaskLocal({
+    String? mainTask,
+    List<String>? additionalTasks,
+    int? year,
+    DateTime? selectedDate,
+    Duration? selectedTime,
+    DateTime? reminderDate,
+    bool? isFlag,
+    String? repeat,
+    String? categoryId,
+  }) {
+    state = state.copyWith(
+      mainTask: mainTask,
+      additionalTasks: additionalTasks,
+      date: state.date.copyWith(
+          year: selectedDate?.year,
+          month: selectedDate?.month,
+          day: selectedDate?.day,
+          hour: selectedTime?.inHours,
+          minute: selectedTime?.inMinutes),
+      reminderDate: reminderDate,
+      isFlag: isFlag,
+      repeat: repeat,
+      categoryId: categoryId,
+    );
+  }
+}
+
+final addTaskLocalProvider =
+    StateNotifierProvider<AddTaskLocalNotifier, TaskEntity>(
+        (ref) => AddTaskLocalNotifier());

@@ -2,6 +2,7 @@ import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/add_task_local_provider.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
+import 'package:exercies3/features/tasks/view/widget/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -106,7 +107,9 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
               },
             ),
             GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  showModalBottomSheet(context: context, isScrollControlled: true, useSafeArea: true, builder: (context) => const DatePickerWidget());
+                },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: const AppIcon(
@@ -131,7 +134,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icRepeat,
-                    iconColor: addTaskLocal.repeat ? Colors.purple : null,
+                    iconColor: addTaskLocal.repeat != null ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(

@@ -9,7 +9,7 @@ class TaskEntity {
   final List<String>? additionalTasks;
   final DateTime date;
   final DateTime? reminderDate;
-  final bool repeat;
+  final String? repeat;
   final String? categoryId;
   final bool isFlag;
 
@@ -21,7 +21,7 @@ class TaskEntity {
     required this.date,
     this.reminderDate,
     this.isFlag = false,
-    this.repeat = false,
+    this.repeat,
     this.categoryId,
   }) : id = id ?? const Uuid().v4();
 
@@ -31,7 +31,7 @@ class TaskEntity {
           List<String>? additionalTasks,
           DateTime? date,
           DateTime? reminderDate,
-          bool? repeat = false,
+          String? repeat,
           bool? isFlag = false,
           String? categoryId}) =>
       TaskEntity(
@@ -53,7 +53,7 @@ class TaskEntity {
         additionalTasks: List<String>.from(json['anditional_tasks']),
         date: json['date'] != null ? (json['date'] as Timestamp).toDate() : DateTime.now(),
         reminderDate: json['reminder_date'] != null ? (json['reminder_date'] as Timestamp).toDate() : null,
-        repeat: json['repeat'] ?? false,
+        repeat: json['repeat'],
         isFlag: json['is_flag'] ?? false,
         categoryId: json['category_id']
       );

@@ -2,7 +2,6 @@ import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
-import 'package:exercies3/features/tasks/provider/hori_index_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/category_manager_screen.dart';
 import 'package:exercies3/features/tasks/view/widget/add_task_widget.dart';

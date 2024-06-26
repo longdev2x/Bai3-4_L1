@@ -175,7 +175,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                       context: context,
                       isScrollControlled: true,
                       useSafeArea: true,
-                      builder: (context) => const DateTimeWidget());
+                      builder: (context) => const AddDateTimeWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),

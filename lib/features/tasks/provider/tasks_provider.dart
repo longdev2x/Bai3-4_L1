@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exercies3/common/model/task_entity.dart';
-import 'package:exercies3/features/tasks/repo/task_repos.dart';
+import 'package:exercies3/features/tasks/repo/tasks_repos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,7 +13,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
   }
 
   Future<List<TaskEntity>> _loadAll() async {
-    return await TaskRepos.getAll();
+    return await TasksRepos.getAll();
   }
 
   Future<void> addTask() async {
@@ -26,7 +26,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     });
     //talk to sever
     try {
-      await TaskRepos.addTask(task);
+      await TasksRepos.addTask(task);
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         print("Add error - ${e.message}");
@@ -45,7 +45,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
       return value;
     });
     try {
-      await TaskRepos.deleteTask(id);
+      await TasksRepos.deleteTask(id);
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         print("error when delete - ${e.message}");
@@ -89,7 +89,7 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
         state.value?.firstWhere((element) => element.id == id);
     if (updateTask == null) return;
     try {
-      await TaskRepos.updateTask(updateTask);
+      await TasksRepos.updateTask(updateTask);
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         print("error update - ${e.message}");
@@ -152,6 +152,3 @@ final addTaskLocalProvider =
     StateNotifierProvider<AddTaskLocalNotifier, TaskEntity>(
   (ref) => AddTaskLocalNotifier(),
 );
-
-//Additional Task
-final totalAdditionTaskProvider = StateProvider<int>((ref) => -1);

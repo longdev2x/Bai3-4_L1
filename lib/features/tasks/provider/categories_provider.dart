@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exercies3/common/model/category_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
-import 'package:exercies3/features/tasks/repo/category_repos.dart';
+import 'package:exercies3/features/tasks/repo/categories_repos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +14,7 @@ class CategoriesAsyncNotifier extends AsyncNotifier<List<CategoryEntity>> {
   }
 
   Future<List<CategoryEntity>> _loadCate() async {
-    return await CategoryRepos.getAll();
+    return await CategoriesRepos.getAll();
   }
 
   Future<void> add(String name, icon) async {
@@ -24,7 +24,7 @@ class CategoriesAsyncNotifier extends AsyncNotifier<List<CategoryEntity>> {
 
     //Server
     try {
-      await CategoryRepos.add(category);
+      await CategoriesRepos.add(category);
     } on FirebaseException catch(e) {
       if (kDebugMode) {
         print(e.message);
@@ -41,7 +41,7 @@ class CategoriesAsyncNotifier extends AsyncNotifier<List<CategoryEntity>> {
     });
 
     try {
-      await CategoryRepos.delete(id);
+      await CategoriesRepos.delete(id);
     } on FirebaseException catch(e) {
       if (kDebugMode) {
         print(e.message);
@@ -69,7 +69,7 @@ class CategoriesAsyncNotifier extends AsyncNotifier<List<CategoryEntity>> {
     });
 
     try {
-      await CategoryRepos.update(categoryUpdate!);
+      await CategoriesRepos.update(categoryUpdate!);
     } on FirebaseException catch(e) {
       if (kDebugMode) {
         print(e.message);

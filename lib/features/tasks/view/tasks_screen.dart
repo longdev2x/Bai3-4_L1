@@ -91,13 +91,67 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           ),
           tasks.when(
             data: (data) {
+              List<TaskEntity> taskFilter = data;
+              if (indexChose != 0) {
+                String? idCateChosed = categories.value?[indexChose - 1].id;
+                taskFilter = data
+                    .where((task) => task.categoryId == idCateChosed)
+                    .toList();
+              }
+              List<TaskEntity> taskDone =
+                  taskFilter.where((task) => task.isDone).toList();
+              List<TaskEntity> taskNotDone =
+                  taskFilter.where((task) => !task.isDone).toList();
+
               return Expanded(
                   child: SlidableAutoCloseBehavior(
-                      child: ListView.builder(
-                          itemCount: data.length,
-                          itemBuilder: (ctx, index) {
-                            return TaskItem(task: data[index]);
-                          })));
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      if (taskNotDone.isNotEmpty)
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "New Task",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.sp),
+                              ),
+                              SizedBox(height: 5.h),
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: taskNotDone.length,
+                                itemBuilder: (ctx, index) =>
+                                    TaskItem(task: taskNotDone[index]),
+                              ),
+                              SizedBox(height: 5.h),
+                            ]),
+                      if (taskDone.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Task Done",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16.sp),
+                            ),
+                            SizedBox(height: 5.h),
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: taskDone.length,
+                              itemBuilder: (ctx, index) =>
+                                  TaskItem(task: taskDone[index]),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ));
             },
             error: (error, stackTrace) {
               if (kDebugMode) {

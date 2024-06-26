@@ -51,3 +51,33 @@ class AppTextFormField extends StatelessWidget {
     );
   }
 }
+
+
+class AppTextFieldNoborder extends StatelessWidget {
+  final TextEditingController? controller;
+  final String? hintText;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  const AppTextFieldNoborder({super.key, this.controller, this.hintText, this.fontSize, this.fontWeight});
+  @override
+  Widget build(context) {
+    return TextField(
+      controller: controller,
+      style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: _outlineInputBorder(),
+        errorBorder: _outlineInputBorder(),
+        enabledBorder: _outlineInputBorder(),
+        focusedBorder: _outlineInputBorder(),
+        focusedErrorBorder: _outlineInputBorder(),
+      ),
+    );
+  }
+
+  OutlineInputBorder _outlineInputBorder() {
+    return const OutlineInputBorder(
+      borderSide: BorderSide.none
+    );
+  }
+}

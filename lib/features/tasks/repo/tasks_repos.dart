@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/app_constants.dart';
 
-class TaskRepos {
+class TasksRepos {
   static final FirebaseFirestore _instance = FirebaseFirestore.instance;
 
   static Future<List<TaskEntity>> getAll() async {

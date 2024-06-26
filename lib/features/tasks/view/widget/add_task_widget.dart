@@ -2,11 +2,10 @@ import 'package:exercies3/common/model/task_entity.dart';
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_dialog.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
+import 'package:exercies3/common/widgets/app_text_form_field.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
-import 'package:exercies3/features/tasks/view/widget/date_picker_widget.dart';
-import 'package:exercies3/features/tasks/view/widget/reminder_date_picker.dart';
-import 'package:exercies3/features/tasks/view/widget/repeat_widget.dart';
+import 'package:exercies3/features/tasks/view/widget/date_time_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +20,8 @@ class AddTaskWidget extends ConsumerStatefulWidget {
 
 class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
   late final TextEditingController _controller;
+  late final List<TextEditingController> _listController = [];
+
   String nameChosed = "Không có thể loại";
 
   @override
@@ -31,14 +32,30 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   void dispose() {
+    for (TextEditingController contro in _listController) {
+      contro.dispose();
+    }
     _controller.dispose();
     super.dispose();
+  }
+
+  void _addController() {
+    setState(() {
+      _listController.add(TextEditingController());
+    });
+  }
+
+  void _removeController(int index) {
+    _listController[index].clear();
+    _listController[index].dispose();
+    setState(() {
+      _listController.removeAt(index);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final TaskEntity addTaskLocal = ref.watch(addTaskLocalProvider);
-    final int totalAdd = ref.watch(totalAdditionTaskProvider);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 15.r),
       decoration: const BoxDecoration(
@@ -46,12 +63,53 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
             topLeft: Radius.circular(16), topRight: Radius.circular(16)),
       ),
       child: Column(children: [
-        TextField(
-          decoration: const InputDecoration(
-            hintText: "Nhập nhiệm vụ mới tại đây",
-          ),
+        AppTextFormField(
+          hintText: "Nhập nhiệm vụ mới tại đây",
           controller: _controller,
         ),
+        SizedBox(height: 5.h),
+        if (_listController.isNotEmpty)
+          Column(
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 200.w),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _listController.length,
+                    itemBuilder: (ctx, index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _listController[index],
+                              decoration: const InputDecoration(
+                                  hintText: "Nhập nhiệm vụ phụ"),
+                            ),
+                          ),
+                          SizedBox(width: 5.w),
+                          GestureDetector(
+                            onTap: () {
+                              _removeController(index);
+                            },
+                            child: const AppIcon(
+                              path: ImageRes.icDelete,
+                              iconColor: Colors.black,
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(height: 5.h),
+              TextButton.icon(
+                onPressed: () {
+                  _addController();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text("Thêm nhiệm vụ phụ"),
+              ),
+            ],
+          ),
         SizedBox(height: 16.h),
         Row(
           children: [
@@ -117,7 +175,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                       context: context,
                       isScrollControlled: true,
                       useSafeArea: true,
-                      builder: (context) => const DatePickerWidget());
+                      builder: (context) => const DateTimeWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -130,7 +188,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 onTap: () {
                   showCupertinoModalPopup(
                       context: context,
-                      builder: (ctx) => const ReminderDatePicker());
+                      builder: (ctx) => const ReminderDatePickerWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -143,7 +201,8 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 )),
             GestureDetector(
                 onTap: () {
-                  showCupertinoModalPopup(context: context, builder: (ctx) => const RepeatWidget());
+                  showCupertinoModalPopup(
+                      context: context, builder: (ctx) => const RepeatWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -155,7 +214,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 )),
             GestureDetector(
                 onTap: () {
-                  ref.read(totalAdditionTaskProvider.notifier).state + 1;
+                  _addController();
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -182,11 +241,24 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
             GestureDetector(
               onTap: () {
                 String mainTask = _controller.text;
-                if(mainTask.trim().isEmpty || mainTask.length < 3) {
+                List<String> listAdditionTask =
+                    _listController.map((e) => e.text).toList();
+                if (mainTask.trim().isEmpty || mainTask.length < 3) {
                   AppDialog.showToast("Nhiệm vụ phải từ 3 ký tự");
                   return;
                 }
-                ref.read(addTaskLocalProvider.notifier).updateTaskLocal(mainTask: mainTask);
+                ref
+                    .read(addTaskLocalProvider.notifier)
+                    .updateTaskLocal(mainTask: mainTask);
+
+                listAdditionTask
+                    .removeWhere((e) => e.trim().isEmpty || e.length < 3);
+                if (listAdditionTask.isNotEmpty) {
+                  ref
+                      .read(addTaskLocalProvider.notifier)
+                      .updateTaskLocal(additionalTasks: listAdditionTask);
+                }
+
                 ref.read(tasksAsyncProvider.notifier).addTask();
                 Navigator.pop(context);
               },

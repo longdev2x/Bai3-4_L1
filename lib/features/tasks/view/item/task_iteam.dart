@@ -3,6 +3,7 @@ import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_dialog.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
+import 'package:exercies3/features/tasks/view/task_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,6 +28,7 @@ class TaskItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => TaskDetailScreen(taskId: task.id))),
       child: Padding(
         padding: EdgeInsets.only(bottom: 10.h),
         child: Slidable(
@@ -127,6 +129,7 @@ class TaskItem extends ConsumerWidget {
                   onPressed: () => _handlerFlag(ref, !task.isFlag),
                   icon: AppIcon(
                       path: ImageRes.icFlag,
+                      size: 30.r,
                       iconColor: task.isFlag ? Colors.black : null),
                 ),
               ],

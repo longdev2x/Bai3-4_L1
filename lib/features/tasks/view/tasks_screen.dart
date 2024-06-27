@@ -23,6 +23,7 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
+  final TaskEntity initTask = TaskEntity(mainTask: "", date: DateTime.now());
   void _updateIndex(WidgetRef ref, int index) =>
       ref.read(horiIndexProvider.notifier).state = index;
 
@@ -164,7 +165,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           GestureDetector(
             onTap: () {
               showModalBottomSheet(
-                  context: context, builder: (ctx) => const AddTaskWidget());
+                  context: context, builder: (ctx) => AddTaskWidget(initTask: initTask));
             },
             child: Align(
               alignment: Alignment.centerRight,

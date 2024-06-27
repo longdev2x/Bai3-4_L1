@@ -12,13 +12,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddTaskWidget extends ConsumerStatefulWidget {
-  const AddTaskWidget({super.key});
+  final TaskEntity initTask;
+  const AddTaskWidget({super.key, required this.initTask});
 
   @override
   ConsumerState<AddTaskWidget> createState() => _AddTaskWidgetState();
 }
 
 class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
+  late  final TaskEntity initTask;
   late final TextEditingController _controller;
   late final List<TextEditingController> _listController = [];
 
@@ -26,6 +28,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   void initState() {
+    initTask = widget.initTask;
     _controller = TextEditingController();
     super.initState();
   }
@@ -55,7 +58,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final TaskEntity addTaskLocal = ref.watch(addTaskLocalProvider);
+    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 15.r),
       decoration: const BoxDecoration(
@@ -118,12 +121,11 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 final fetchCategories = ref.watch(categoriesAsyncProvider);
                 return fetchCategories.when(
                     data: (cates) {
-                      if (addTaskLocal.categoryId != null &&
-                          addTaskLocal.categoryId!.isNotEmpty) {
+                      if (task.categoryId != null &&
+                          task.categoryId!.isNotEmpty) {
                         nameChosed = cates
                             .firstWhere((cate) =>
-                                cate.id.compareTo(addTaskLocal.categoryId!) ==
-                                0)
+                                cate.id.compareTo(task.categoryId!) == 0)
                             .name;
                       } else {
                         nameChosed = "Không có thể loại";
@@ -140,7 +142,8 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                         child: PopupMenuButton<String>(
                             onSelected: (value) {
                               ref
-                                  .read(addTaskLocalProvider.notifier)
+                                  .read(taskLocalProviderFamily(initTask)
+                                      .notifier)
                                   .updateTaskLocal(categoryId: value);
                             },
                             position: PopupMenuPosition.under,
@@ -175,7 +178,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                       context: context,
                       isScrollControlled: true,
                       useSafeArea: true,
-                      builder: (context) => const AddDateTimeWidget());
+                      builder: (context) => DateTimeWidget(initTask: initTask));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -188,28 +191,44 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 onTap: () {
                   showCupertinoModalPopup(
                       context: context,
-                      builder: (ctx) => const ReminderDatePickerWidget());
+                      builder: (ctx) => ReminderDatePickerWidget(
+                            initTask: initTask,
+                            onChange: (value) {
+                              ref
+                                  .read(taskLocalProviderFamily(initTask)
+                                      .notifier)
+                                  .updateTaskLocal(
+                                      reminderDuration:
+                                          Duration(minutes: value ?? 0));
+                            },
+                          ));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icNotification,
-                    iconColor: addTaskLocal.reminderDate != null
-                        ? Colors.purple
-                        : null,
+                    iconColor: task.reminderDate != null ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(
                 onTap: () {
                   showCupertinoModalPopup(
-                      context: context, builder: (ctx) => const RepeatWidget());
+                      context: context,
+                      builder: (ctx) => RepeatWidget(
+                            initTask: initTask,
+                            onChange: (value) {
+                              ref
+                                  .read(taskLocalProviderFamily(initTask)
+                                      .notifier)
+                                  .updateTaskLocal(repeat: value);
+                            },
+                          ));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icRepeat,
-                    iconColor:
-                        addTaskLocal.repeat != null ? Colors.purple : null,
+                    iconColor: task.repeat != null ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(
@@ -220,22 +239,21 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icSMS,
-                    iconColor: addTaskLocal.additionalTasks != null
-                        ? Colors.purple
-                        : null,
+                    iconColor:
+                        task.additionalTasks != null ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(
                 onTap: () {
                   ref
-                      .read(addTaskLocalProvider.notifier)
-                      .updateTaskLocal(isFlag: !addTaskLocal.isFlag);
+                      .read(taskLocalProviderFamily(initTask).notifier)
+                      .updateTaskLocal(isFlag: !task.isFlag);
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: AppIcon(
                     path: ImageRes.icFlag,
-                    iconColor: addTaskLocal.isFlag ? Colors.purple : null,
+                    iconColor: task.isFlag ? Colors.purple : null,
                   ),
                 )),
             GestureDetector(
@@ -248,18 +266,17 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   return;
                 }
                 ref
-                    .read(addTaskLocalProvider.notifier)
+                    .read(taskLocalProviderFamily(initTask).notifier)
                     .updateTaskLocal(mainTask: mainTask);
 
                 listAdditionTask
                     .removeWhere((e) => e.trim().isEmpty || e.length < 3);
                 if (listAdditionTask.isNotEmpty) {
                   ref
-                      .read(addTaskLocalProvider.notifier)
+                      .read(taskLocalProviderFamily(initTask).notifier)
                       .updateTaskLocal(additionalTasks: listAdditionTask);
                 }
-
-                ref.read(tasksAsyncProvider.notifier).addTask();
+                ref.read(tasksAsyncProvider.notifier).addTask(initTask);
                 Navigator.pop(context);
               },
               child: AppIcon(

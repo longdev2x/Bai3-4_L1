@@ -181,7 +181,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                   child: Column(children: [
                     ListTile(
                       onTap: () {
-                        showModalBottomSheet(context: context, builder: (ctx) => const AddDateTimeWidget(), useSafeArea: true, isScrollControlled: true);
+                        showModalBottomSheet(context: context, builder: (ctx) => DateTimeWidget(initTask: task, taskIdDetailFamily: widget.taskId), useSafeArea: true, isScrollControlled: true);
                       },
                       leading: const AppIcon(
                         path: ImageRes.icCalendar,

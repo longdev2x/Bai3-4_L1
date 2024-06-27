@@ -21,9 +21,9 @@ class TaskAsyncNotifier extends FamilyAsyncNotifier<TaskEntity?, String> {
   Future<void> updateTask(
       {String? mainTask,
       List<String>? additionalTasks,
-      DateTime? date,
-      Duration? durationTime,
-      int? reminderMinutes,
+      DateTime? selectedDate,
+      Duration? selectedTime,
+      DateTime? reminderTime,
       String? categoryId,
       bool? isDone,
       bool? isFlag,
@@ -33,13 +33,12 @@ class TaskAsyncNotifier extends FamilyAsyncNotifier<TaskEntity?, String> {
           mainTask: mainTask,
           additionalTasks: additionalTasks,
           date: task.date.copyWith(
-              year: date?.year,
-              month: date?.month,
-              day: date?.day,
-              hour: durationTime?.inHours,
-              minute: durationTime?.inMinutes),
-          reminderDate: task.reminderDate
-              ?.subtract(Duration(minutes: reminderMinutes ?? 0)),
+              year: selectedDate?.year,
+              month: selectedDate?.month,
+              day: selectedDate?.day,
+              hour: selectedTime?.inHours,
+              minute: selectedTime != null ? selectedTime.inMinutes % 60 : null),
+          reminderDate: reminderTime,
           categoryId: categoryId,
           isDone: isDone,
           isFlag: isFlag,
@@ -61,4 +60,5 @@ class TaskAsyncNotifier extends FamilyAsyncNotifier<TaskEntity?, String> {
 }
 
 final taskDetailAsyncProvider =
-    AsyncNotifierProviderFamily<TaskAsyncNotifier, TaskEntity?, String>(() => TaskAsyncNotifier());
+    AsyncNotifierProviderFamily<TaskAsyncNotifier, TaskEntity?, String>(
+        () => TaskAsyncNotifier());

@@ -74,13 +74,23 @@ class TaskEntity {
         'category_id': categoryId
       };
 
-  String get formatDate {
+  String get formatDateTime {
     final fomart = DateFormat("dd/MM - kk:mm");
     return fomart.format(date);
   }
 
-  String get formatReminderDate {
+  String get formatDate {
     final fomart = DateFormat("dd/MM");
+    return fomart.format(date);
+  }
+
+  String get formatTime {
+    final fomart = DateFormat("kk:mm");
+    return fomart.format(date);
+  }
+
+  String get formatReminderTime {
+    final fomart = DateFormat("kk:mm");
     return fomart.format(reminderDate ?? DateTime(date.minute + 5));
   }
 }

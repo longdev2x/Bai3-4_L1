@@ -5,6 +5,7 @@ import 'package:exercies3/features/tasks/provider/categories_provider.dart';
 import 'package:exercies3/features/tasks/provider/task_detail_provider.dart';
 import 'package:exercies3/features/tasks/provider/tasks_provider.dart';
 import 'package:exercies3/features/tasks/view/widget/date_time_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -181,23 +182,57 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                   child: Column(children: [
                     ListTile(
                       onTap: () {
-                        showModalBottomSheet(context: context, builder: (ctx) => DateTimeWidget(initTask: task, taskIdDetailFamily: widget.taskId), useSafeArea: true, isScrollControlled: true);
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) =>
+                                DateTimeWidget(taskId: widget.taskId),
+                            useSafeArea: true,
+                            isScrollControlled: true);
                       },
                       leading: const AppIcon(
                         path: ImageRes.icCalendar,
                       ),
-                      title: const Text("Ngày đến hạn"),
+                      title: const Text("Ngày"),
                       trailing: Text(task.formatDate),
                     ),
                     ListTile(
                       onTap: () {
-                        
+                        showCupertinoModalPopup(
+                            context: context,
+                            builder: (ctx) => TimePickerWidget(
+                                  taskId: task.id,
+                                  onTimeChange: (duration) {
+                                    ref
+                                        .read(taskDetailAsyncProvider(
+                                                widget.taskId)
+                                            .notifier)
+                                        .updateTask(selectedTime: duration);
+                                  },
+                                ));
                       },
                       leading: const AppIcon(
-                        path: ImageRes.icCalendar,
+                        path: ImageRes.icAlarm,
                       ),
                       title: const Text("Thời gian"),
-                      trailing: Text(task.formatDate),
+                      trailing: Text(task.formatTime),
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      leading: const AppIcon(
+                        path: ImageRes.icNotification,
+                      ),
+                      title: const Text("Lời nhắc lúc"),
+                      trailing: Text(task.formatReminderTime),
+                    ),
+                    ListTile(
+                      onTap: () {},
+                      leading: const AppIcon(
+                        path: ImageRes.icRepeat,
+                      ),
+                      title: const Text("Lặp lại"),
+                      trailing: Text(task.repeat != null
+                          ? "Theo ${task.repeat}"
+                          : "Không"),
                     ),
                   ]),
                 ),

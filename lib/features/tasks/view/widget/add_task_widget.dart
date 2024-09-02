@@ -12,15 +12,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddTaskWidget extends ConsumerStatefulWidget {
-  final TaskEntity initTask;
-  const AddTaskWidget({super.key, required this.initTask});
+  const AddTaskWidget({super.key});
 
   @override
   ConsumerState<AddTaskWidget> createState() => _AddTaskWidgetState();
 }
 
 class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
-  late  final TaskEntity initTask;
   late final TextEditingController _controller;
   late final List<TextEditingController> _listController = [];
 
@@ -28,7 +26,6 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   void initState() {
-    initTask = widget.initTask;
     _controller = TextEditingController();
     super.initState();
   }
@@ -58,7 +55,9 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
+    TaskEntity task = ref.watch(taskLocalProvider);
+    final notifier = ref.read(taskLocalProvider.notifier);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.r, vertical: 15.r),
       decoration: const BoxDecoration(
@@ -141,10 +140,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                             color: Colors.amber),
                         child: PopupMenuButton<String>(
                             onSelected: (value) {
-                              ref
-                                  .read(taskLocalProviderFamily(initTask)
-                                      .notifier)
-                                  .updateTaskLocal(categoryId: value);
+                              notifier.updateTaskLocal(categoryId: value);
                             },
                             position: PopupMenuPosition.under,
                             itemBuilder: (context) => [
@@ -178,7 +174,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                       context: context,
                       isScrollControlled: true,
                       useSafeArea: true,
-                      builder: (context) => DateTimeWidget(initTask: initTask));
+                      builder: (context) => const DateTimeWidget());
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -192,14 +188,10 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   showCupertinoModalPopup(
                       context: context,
                       builder: (ctx) => ReminderDatePickerWidget(
-                            initTask: initTask,
                             onChange: (value) {
-                              ref
-                                  .read(taskLocalProviderFamily(initTask)
-                                      .notifier)
-                                  .updateTaskLocal(
-                                      reminderDuration:
-                                          Duration(minutes: value ?? 0));
+                              notifier.updateTaskLocal(
+                                reminderDuration: Duration(minutes: value ?? 0),
+                              );
                             },
                           ));
                 },
@@ -215,12 +207,8 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   showCupertinoModalPopup(
                       context: context,
                       builder: (ctx) => RepeatWidget(
-                            initTask: initTask,
                             onChange: (value) {
-                              ref
-                                  .read(taskLocalProviderFamily(initTask)
-                                      .notifier)
-                                  .updateTaskLocal(repeat: value);
+                              notifier.updateTaskLocal(repeat: value);
                             },
                           ));
                 },
@@ -245,9 +233,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                 )),
             GestureDetector(
                 onTap: () {
-                  ref
-                      .read(taskLocalProviderFamily(initTask).notifier)
-                      .updateTaskLocal(isFlag: !task.isFlag);
+                  notifier.updateTaskLocal(isFlag: !task.isFlag);
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 10.w),
@@ -257,7 +243,7 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   ),
                 )),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 String mainTask = _controller.text;
                 List<String> listAdditionTask =
                     _listController.map((e) => e.text).toList();
@@ -265,19 +251,19 @@ class _AddTaskWidgetState extends ConsumerState<AddTaskWidget> {
                   AppDialog.showToast("Nhiệm vụ phải từ 3 ký tự");
                   return;
                 }
-                ref
-                    .read(taskLocalProviderFamily(initTask).notifier)
-                    .updateTaskLocal(mainTask: mainTask);
+
+                notifier.updateTaskLocal(mainTask: mainTask);
 
                 listAdditionTask
                     .removeWhere((e) => e.trim().isEmpty || e.length < 3);
                 if (listAdditionTask.isNotEmpty) {
-                  ref
-                      .read(taskLocalProviderFamily(initTask).notifier)
-                      .updateTaskLocal(additionalTasks: listAdditionTask);
+                  notifier.updateTaskLocal(additionalTasks: listAdditionTask);
                 }
-                ref.read(tasksAsyncProvider.notifier).addTask(initTask);
+                TaskEntity updateTask = ref.watch(taskLocalProvider);
+                
+                ref.read(tasksAsyncProvider.notifier).addTask(updateTask);
                 Navigator.pop(context);
+                ref.invalidate(taskLocalProvider);
               },
               child: AppIcon(
                 path: ImageRes.icDone,

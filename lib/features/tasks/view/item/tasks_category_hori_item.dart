@@ -20,9 +20,9 @@ class TaskCategoryHoriItem extends StatelessWidget {
           onPressed: onPressed,
           style: ButtonStyle(
             backgroundColor:
-                isChose ? const MaterialStatePropertyAll(Colors.black) : null,
+                isChose ? const WidgetStatePropertyAll(Colors.black) : null,
             foregroundColor:
-                isChose ? const MaterialStatePropertyAll(Colors.white) : null,
+                isChose ? const WidgetStatePropertyAll(Colors.white) : null,
           ),
           child: Text(name),
         ),

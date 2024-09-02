@@ -1,4 +1,5 @@
 import 'package:exercies3/common/model/task_entity.dart';
+import 'package:exercies3/common/services/notification_sevices.dart';
 import 'package:exercies3/common/utils/image_res.dart';
 import 'package:exercies3/common/widgets/app_icon.dart';
 import 'package:exercies3/features/tasks/provider/categories_provider.dart';
@@ -23,6 +24,7 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
+  final NotificationServices notification = NotificationServices();
   final TaskEntity initTask = TaskEntity(mainTask: "", date: DateTime.now());
   void _updateIndex(WidgetRef ref, int index) =>
       ref.read(horiIndexProvider.notifier).state = index;
@@ -165,7 +167,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           GestureDetector(
             onTap: () {
               showModalBottomSheet(
-                  context: context, builder: (ctx) => AddTaskWidget(initTask: initTask));
+                  context: context, builder: (ctx) => const AddTaskWidget());
             },
             child: Align(
               alignment: Alignment.centerRight,

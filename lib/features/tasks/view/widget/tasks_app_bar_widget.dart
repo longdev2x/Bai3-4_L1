@@ -5,11 +5,11 @@ AppBar tasksAppBarWidget() => AppBar(
         ElevatedButton(
           onPressed: () {},
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                   const Color.fromARGB(255, 218, 183, 80)),
-              foregroundColor: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(
                   const Color.fromARGB(255, 42, 6, 171)),
-              padding: MaterialStateProperty.all(
+              padding: WidgetStateProperty.all(
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 0.5))),
           child: const Text("PRO"),
         ),

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exercies3/common/model/task_entity.dart';
+import 'package:exercies3/common/services/notification_sevices.dart';
 import 'package:exercies3/features/tasks/repo/tasks_repos.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
@@ -16,21 +18,22 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     return await TasksRepos.getAll();
   }
 
-  Future<void> addTask(TaskEntity initTask) async {
-    TaskEntity task = ref.read(taskLocalProviderFamily(initTask));
+  Future<void> addTask(TaskEntity task) async {
     state = state.whenData((value) {
-      return [...value, task];
+      return [task, ...value];
     });
+
     //talk to sever
     try {
       await TasksRepos.addTask(task);
+      _scheduleSleepNotification(
+          TimeOfDay.fromDateTime(task.reminderDate ?? DateTime.now()));
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         print("Add error - ${e.message}");
       }
     } finally {
       state = await AsyncValue.guard(() async => await _loadAll());
-      ref.invalidate(taskLocalProviderFamily(initTask));
     }
   }
 
@@ -85,6 +88,8 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     if (updateTask == null) return;
     try {
       await TasksRepos.updateTask(updateTask);
+      _scheduleSleepNotification(
+          TimeOfDay.fromDateTime(updateTask.reminderDate ?? DateTime.now()));
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         print("error update - ${e.message}");
@@ -92,6 +97,16 @@ class TasksAsyncNotifier extends AsyncNotifier<List<TaskEntity>> {
     } finally {
       state = await AsyncValue.guard(() async => await _loadAll());
     }
+  }
+
+  void _scheduleSleepNotification(TimeOfDay time) {
+    NotificationServices().scheduleSleepNotification(
+        'task_id',
+        'Task Notifications',
+        'Đã đến giờ Task!',
+        'Nhấn để xem task',
+        'task_screen',
+        time);
   }
 }
 
@@ -102,9 +117,9 @@ final tasksAsyncProvider =
 final List<int> durationMinutes = [5, 15, 30, 60, 180, 1440];
 final List<String> repeatAccordings = ["giờ", "ngày", "tuần", "tháng"];
 
-//Add, Update local. Handler Date and Time, repeat
+//Add  local. Handler Date and Time, repeat
 class TaskLocalNotifier extends StateNotifier<TaskEntity> {
-  TaskLocalNotifier(TaskEntity task) : super(task);
+  TaskLocalNotifier() : super(TaskEntity(mainTask: '', date: DateTime.now()));
 
   void updateTaskLocal({
     String? mainTask,
@@ -126,8 +141,9 @@ class TaskLocalNotifier extends StateNotifier<TaskEntity> {
           day: selectedDate?.day,
           hour: selectedTime?.inHours,
           minute: selectedTime != null ? selectedTime.inMinutes % 60 : null),
-      reminderDate:
-          state.date.subtract(reminderDuration ?? const Duration(minutes: 25)),
+      reminderDate: reminderDuration != null
+          ? state.date.subtract(reminderDuration)
+          : null,
       isFlag: isFlag,
       repeat: repeat,
       categoryId: categoryId,
@@ -135,7 +151,6 @@ class TaskLocalNotifier extends StateNotifier<TaskEntity> {
   }
 }
 
-final taskLocalProviderFamily =
-    StateNotifierProviderFamily<TaskLocalNotifier, TaskEntity, TaskEntity>(
-  (ref, task) => TaskLocalNotifier(task),
+final taskLocalProvider = StateNotifierProvider<TaskLocalNotifier, TaskEntity>(
+  (ref) => TaskLocalNotifier(),
 );

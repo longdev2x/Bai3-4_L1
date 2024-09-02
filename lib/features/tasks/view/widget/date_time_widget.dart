@@ -10,25 +10,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DateTimeWidget extends ConsumerWidget {
-  final TaskEntity initTask;
-  final String? taskIdDetailFamily;
-  const DateTimeWidget(
-      {super.key, required this.initTask, this.taskIdDetailFamily});
+  final String? taskId;
+  const DateTimeWidget({super.key, this.taskId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
-    final notifier = ref.read(taskLocalProviderFamily(initTask).notifier);
+    TaskEntity? task;
+    if (taskId == null) {
+      task = ref.watch(taskLocalProvider);
+    } else {
+      task = ref.watch(taskDetailAsyncProvider(taskId!)).valueOrNull;
+    }
+
+    final addNotifier = ref.read(taskLocalProvider.notifier);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 20.r),
       child: Column(children: [
         AppTitleBottomSheet(
             name: "Ngày & Giờ",
-            onPressed: taskIdDetailFamily != null
+            onPressed: taskId != null
                 ? () {
+                    if (task == null) return;
                     ref
-                        .read(taskDetailAsyncProvider(taskIdDetailFamily!)
-                            .notifier)
+                        .read(taskDetailAsyncProvider(taskId!).notifier)
                         .updateTask(
                             selectedDate: task.date,
                             selectedTime: Duration(
@@ -43,9 +48,13 @@ class DateTimeWidget extends ConsumerWidget {
                   }),
         SizedBox(height: 10.h),
         DatePickerWidget(
-          initTask: initTask,
+          taskId: taskId,
           onDateChanged: (value) {
-            notifier.updateTaskLocal(selectedDate: value);
+            taskId == null
+                ? addNotifier.updateTaskLocal(selectedDate: value)
+                : ref
+                    .read(taskDetailAsyncProvider(taskId!).notifier)
+                    .updateTask(selectedDate: value);
           },
         ),
         SizedBox(height: 15.h),
@@ -55,16 +64,20 @@ class DateTimeWidget extends ConsumerWidget {
               onTap: () => showCupertinoModalPopup(
                 context: context,
                 builder: (ctx) => TimePickerWidget(
-                  initTask: initTask,
+                  taskId: taskId,
                   onTimeChange: (duration) {
-                    notifier.updateTaskLocal(selectedTime: duration);
+                    taskId == null
+                        ? addNotifier.updateTaskLocal(selectedTime: duration)
+                        : ref
+                            .read(taskDetailAsyncProvider(taskId!).notifier)
+                            .updateTask(selectedTime: duration);
                   },
                 ),
               ),
               leading: const AppIcon(path: ImageRes.icAlarm),
               title: const Text('Thời gian'),
               trailing: Text(
-                "${task.date.hour}h:${task.date.minute}p",
+                "${task?.date.hour}h:${task?.date.minute}p",
                 style: TextStyle(fontSize: 17.sp),
               ),
             ),
@@ -72,17 +85,23 @@ class DateTimeWidget extends ConsumerWidget {
               onTap: () => showCupertinoModalPopup(
                   context: context,
                   builder: (ctx) => ReminderDatePickerWidget(
-                      initTask: initTask,
+                      taskId: taskId,
                       onChange: (value) {
-                        notifier.updateTaskLocal(
-                            reminderDuration:
-                                Duration(minutes: value ?? durationMinutes[0]));
+                        taskId == null
+                            ? addNotifier.updateTaskLocal(
+                                reminderDuration: Duration(
+                                    minutes: value ?? durationMinutes[0]))
+                            : ref
+                                .read(taskDetailAsyncProvider(taskId!).notifier)
+                                .updateTask(
+                                    reminderTime: task?.date.subtract(Duration(
+                                        minutes: value ?? durationMinutes[0])));
                       })),
               leading: const AppIcon(path: ImageRes.icNotification),
               title: const Text('Lời nhắc lúc'),
               trailing: Text(
-                task.reminderDate != null
-                    ? "${task.reminderDate?.hour}h:${task.reminderDate?.minute}p"
+                task?.reminderDate != null
+                    ? "${task?.reminderDate?.hour}h:${task?.reminderDate?.minute}p"
                     : 'Không',
                 style: TextStyle(fontSize: 17.sp),
               ),
@@ -91,15 +110,20 @@ class DateTimeWidget extends ConsumerWidget {
               onTap: () => showCupertinoModalPopup(
                   context: context,
                   builder: (ctx) => RepeatWidget(
-                        initTask: initTask,
+                        taskId: taskId,
                         onChange: (value) {
-                          notifier.updateTaskLocal(repeat: value);
+                          taskId == null
+                              ? addNotifier.updateTaskLocal(repeat: value)
+                              : ref
+                                  .read(
+                                      taskDetailAsyncProvider(taskId!).notifier)
+                                  .updateTask(repeat: value);
                         },
                       )),
               leading: const AppIcon(path: ImageRes.icRepeat),
               title: const Text('Lặp lại'),
               trailing: Text(
-                task.repeat != null ? "Hàng ${task.repeat!}" : 'Không',
+                task?.repeat != null ? "Hàng ${task?.repeat!}" : 'Không',
                 style: TextStyle(fontSize: 17.sp),
               ),
             ),
@@ -111,21 +135,27 @@ class DateTimeWidget extends ConsumerWidget {
 }
 
 class DatePickerWidget extends ConsumerWidget {
-  final TaskEntity initTask;
+  final String? taskId;
   final Function(DateTime) onDateChanged;
   const DatePickerWidget({
     super.key,
-    required this.initTask,
+    this.taskId,
     required this.onDateChanged,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
+    TaskEntity? task;
+    if (taskId == null) {
+      task = ref.watch(taskLocalProvider);
+    } else {
+      task = ref.watch(taskDetailAsyncProvider(taskId!)).valueOrNull;
+    }
+
     return Card(
       child: CalendarDatePicker(
         onDateChanged: onDateChanged,
-        initialDate: task.date,
+        initialDate: task?.date ?? DateTime.now(),
         firstDate: DateTime.now().subtract(const Duration(days: 3650)),
         lastDate: DateTime(DateTime.now().year + 10),
         initialCalendarMode: DatePickerMode.day,
@@ -135,17 +165,24 @@ class DatePickerWidget extends ConsumerWidget {
 }
 
 class TimePickerWidget extends ConsumerWidget {
-  final TaskEntity initTask;
+  final String? taskId;
   final Function(Duration duration) onTimeChange;
+
   const TimePickerWidget({
     super.key,
-    required this.initTask,
+    this.taskId,
     required this.onTimeChange,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
+    TaskEntity? task;
+    if (taskId == null) {
+      task = ref.watch(taskLocalProvider);
+    } else {
+      task = ref.watch(taskDetailAsyncProvider(taskId!)).valueOrNull;
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       bottomSheet: Container(
@@ -164,8 +201,9 @@ class TimePickerWidget extends ConsumerWidget {
               height: 200.h,
               child: CupertinoTimerPicker(
                 onTimerDurationChanged: onTimeChange,
-                initialTimerDuration:
-                    Duration(hours: task.date.hour, minutes: task.date.minute),
+                initialTimerDuration: Duration(
+                    hours: task?.date.hour ?? DateTime.now().hour,
+                    minutes: task?.date.minute ?? DateTime.now().minute),
                 mode: CupertinoTimerPickerMode.hm,
               ),
             ),
@@ -177,18 +215,26 @@ class TimePickerWidget extends ConsumerWidget {
 }
 
 class ReminderDatePickerWidget extends ConsumerWidget {
-  final TaskEntity initTask;
+  final String? taskId;
   final Function(int? value) onChange;
   const ReminderDatePickerWidget(
-      {super.key, required this.initTask, required this.onChange});
+      {super.key, this.taskId, required this.onChange});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
+    TaskEntity? task;
+    if (taskId == null) {
+      task = ref.watch(taskLocalProvider);
+    } else {
+      task = ref.watch(taskDetailAsyncProvider(taskId!)).valueOrNull;
+    }
 
-    final DateTime date = task.date;
-    final int groupValue = task.reminderDate != null
-        ? date.difference(task.reminderDate!).inMinutes
+    final DateTime date = task?.date ?? DateTime.now();
+    final int groupValue = task?.reminderDate != null
+        ? date
+            .difference(task?.reminderDate ??
+                DateTime.now().subtract(const Duration(minutes: 5)))
+            .inMinutes
         : durationMinutes[0];
 
     return Scaffold(
@@ -220,14 +266,19 @@ class ReminderDatePickerWidget extends ConsumerWidget {
 }
 
 class RepeatWidget extends ConsumerWidget {
-  final TaskEntity initTask;
+  final String? taskId;
   final Function(String? value) onChange;
-  const RepeatWidget(
-      {super.key, required this.initTask, required this.onChange});
+  const RepeatWidget({super.key, this.taskId, required this.onChange});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TaskEntity task = ref.watch(taskLocalProviderFamily(initTask));
+    TaskEntity? task;
+    if (taskId == null) {
+      task = ref.watch(taskLocalProvider);
+    } else {
+      task = ref.watch(taskDetailAsyncProvider(taskId!)).valueOrNull;
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       bottomSheet: Container(
@@ -239,15 +290,15 @@ class RepeatWidget extends ConsumerWidget {
               onPressed: () {
                 Navigator.pop(context);
               }),
-          ...repeatAccordings
-              .map(
-                (e) => RadioMenuButton<String>(
-                    value: e,
-                    groupValue: task.repeat,
-                    onChanged: onChange,
-                    child: Text("Theo $e")),
-              )
-              .toList(),
+          ...repeatAccordings.map(
+            (e) {
+              return RadioMenuButton<String>(
+                  value: e,
+                  groupValue: task?.repeat,
+                  onChanged: onChange,
+                  child: Text("Theo $e"));
+            },
+          ).toList(),
         ]),
       ),
     );

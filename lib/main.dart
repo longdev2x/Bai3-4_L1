@@ -1,4 +1,5 @@
-import 'package:exercies3/features/application/view/application.dart';
+import 'package:exercies3/common/services/notification_sevices.dart';
+import 'package:exercies3/features/tasks/view/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,11 +14,14 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    NotificationServices().initialize1();
+    NotificationServices().initialize2(context);
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) => MaterialApp(
@@ -27,7 +31,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const Application(),
+        home: const TasksScreen(),
       ),
     );
   }

@@ -73,6 +73,7 @@ class NotificationServices {
     );
 
     try {
+      print('zzz- Ok -$time');
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         title,
